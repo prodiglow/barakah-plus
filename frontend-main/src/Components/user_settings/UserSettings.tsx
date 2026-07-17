@@ -103,7 +103,7 @@ const UserSettings: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (phoneCountdown > 0) {
       timer = setInterval(() => {
         setPhoneCountdown((prev: number) => prev - 1);
@@ -113,7 +113,7 @@ const UserSettings: React.FC = () => {
   }, [phoneCountdown]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (emailCountdown > 0) {
       timer = setInterval(() => {
         setEmailCountdown((prev: number) => prev - 1);

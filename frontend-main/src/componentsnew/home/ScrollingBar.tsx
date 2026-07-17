@@ -10,8 +10,8 @@ const TypingBar: React.FC = () => {
     const [isWaiting, setIsWaiting] = useState(false);
 
     useEffect(() => {
-        let typingInterval: NodeJS.Timeout | null = null;
-        let resetTimeout: NodeJS.Timeout | null = null;
+        let typingInterval: ReturnType<typeof setTimeout> | null = null;
+        let resetTimeout: ReturnType<typeof setTimeout> | null = null;
         let currentIndex = 0;
 
         const startTyping = () => {

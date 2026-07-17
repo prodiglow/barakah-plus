@@ -78,7 +78,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
   const emailOtpRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   React.useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (phoneCountdown > 0) {
       timer = setInterval(() => {
         setPhoneCountdown((prev: number) => prev - 1);
@@ -88,7 +88,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
   }, [phoneCountdown]);
 
   React.useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (emailCountdown > 0) {
       timer = setInterval(() => {
         setEmailCountdown((prev: number) => prev - 1);
