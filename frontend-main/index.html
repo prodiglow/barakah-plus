@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/src/assets/Barakah.svg" />
+
+  <title>BarakaPlus | Authentic Islamic Products & Spiritual Essentials</title>
+
+  <meta name="description"
+    content="Your premier destination for authentic Islamic essentials, premium prayer mats, and handcrafted tasbehat sourced directly from sacred sites.">
+
+  <meta property="og:title" content="BarakaPlus - Authentic Islamic Essentials" />
+  <meta property="og:description"
+    content="Sourced directly from sacred sites. Premium prayer mats and handcrafted tasbehat." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.barakaplus.com/" />
+  <meta property="og:image" content="https://www.barakaplus.com/src/assets/Barakah.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap" rel="stylesheet">
+
+  <link rel="dns-prefetch" href="https://translate.googleapis.com">
+  <link rel="preconnect" href="https://translate.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="https://translate.google.com">
+  <link rel="preconnect" href="https://translate.google.com" crossorigin>
+</head>
+
+<body>
+  <style>
+    body {
+      top: 0px !important;
+      position: static !important;
+    }
+
+    body.urdu-font,
+    body.urdu-font *,
+    body.urdu-font h1,
+    body.urdu-font h2,
+    body.urdu-font h3,
+    body.urdu-font h4,
+    body.urdu-font h5,
+    body.urdu-font h6,
+    body.urdu-font p,
+    body.urdu-font span,
+    body.urdu-font a,
+    body.urdu-font div,
+    body.urdu-font button {
+      font-family: 'Noto Nastaliq Urdu', serif !important;
+    }
+
+    .skiptranslate iframe,
+    .goog-te-banner-frame {
+      display: none !important;
+    }
+
+    #goog-gt-tt,
+    .goog-te-balloon-frame {
+      display: none !important;
+    }
+
+    .goog-text-highlight {
+      background: none !important;
+      box-shadow: none !important;
+    }
+  </style>
+  <div id="google_translate_element" style="position:fixed; width:0; height:0; overflow:hidden;"></div>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'ur,en',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" async defer
+    src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

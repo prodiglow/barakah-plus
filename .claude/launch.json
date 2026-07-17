@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend-main",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace", "frontend-main"],
+      "port": 5173
+    },
+    {
+      "name": "frontend-admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace", "frontend-admin"],
+      "port": 5174
+    }
+  ]
+}

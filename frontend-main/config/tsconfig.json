@@ -1,0 +1,58 @@
+// {
+//   "files": [],
+//   "references": [
+//     { "path": "./tsconfig.app.json" },
+//     { "path": "./tsconfig.node.json" }
+//   ]
+// }
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*",
+    "../src/**/*",
+    "../*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
+// {
+//   "compilerOptions": {
+//     "target": "esnext",
+//     "module": "esnext",
+//     "strict": true,
+//     "jsx": "react-jsx", // Changed from "preserve" for React optimization
+//     "moduleResolution": "bundler",
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true,
+//     "baseUrl": ".",
+//     "paths": {
+//       "@/*": ["src/*"]
+//     },
+//     "allowImportingTsExtensions": true,
+//     "noEmit": true,
+//     "allowJs": false, // Explicitly disable .js file compilation
+//     "checkJs": false // Disable type-checking for .js files
+//   },
+//   "include": ["src/**/*.ts", "src/**/*.tsx"], // Only include .ts and .tsx
+//   "exclude": ["node_modules", "dist", "**/*.js", "**/*.jsx"] // Explicitly exclude .js and .jsx
+// }

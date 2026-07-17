@@ -1,0 +1,21 @@
+{
+  "name": "BarakahProject",
+  "private": true,
+  "workspaces": [
+    "frontend-main",
+    "frontend-admin",
+    "backend"
+  ],
+  "scripts": {
+    "dev:main": "npm --workspace frontend-main run dev",
+    "dev:admin": "npm --workspace frontend-admin run dev",
+    "dev:backend": "npm --workspace backend run dev",
+    "dev": "npm-run-all --parallel dev:backend dev:main dev:admin"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "axios": "^1.13.5"
+  }
+}
