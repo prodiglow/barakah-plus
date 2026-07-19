@@ -40,6 +40,7 @@ async function seed() {
     const scholar = await Scholar.create({
       scholarID: 1002,
       scholarName: "Dr. Siddiqa Akhtar",
+      phone_number: "+923001234567",
       scholarSpecialization: specIds,
       scholarExperience: 12,
       scholarEducation: eduIds, 
