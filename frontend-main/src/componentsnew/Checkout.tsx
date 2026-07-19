@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { FaLock, FaCreditCard, FaMapMarkerAlt, FaUser, FaMobileAlt } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 interface CartItem {
     id: number | string;
@@ -42,6 +43,7 @@ interface Errors {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 const Checkout: React.FC = () => {
+    const { t } = useTranslation();
     const { items, getTotalPrice, clearCart } = useCart() as {
         items: CartItem[];
         getTotalPrice: () => number;
@@ -125,26 +127,26 @@ const Checkout: React.FC = () => {
         const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'state', 'zipCode'];
         requiredFields.forEach(field => {
             if (!formData[field].trim()) {
-                newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+                newErrors[field] = t('checkout.fieldRequired', { field: field.charAt(0).toUpperCase() + field.slice(1) });
             }
         });
 
         // Email validation
         if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
+            newErrors.email = t('checkout.emailInvalid');
         }
 
         // Phone validation (Pakistani number: 11 digits)
         if (formData.phone && !/^\d{11}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
-            newErrors.phone = 'Please enter a valid 11-digit phone number (e.g., 03001234567)';
+            newErrors.phone = t('checkout.phoneInvalid');
         }
 
         // Payment method validation
         if (activeTab === 'mwallet') {
             if (!jazzCashMobile) {
-                newErrors.jazzCashMobile = 'JazzCash Mobile Number is required';
+                newErrors.jazzCashMobile = t('checkout.jazzCashRequired');
             } else if (!/^03\d{9}$/.test(jazzCashMobile)) {
-                newErrors.jazzCashMobile = 'Please enter a valid JazzCash Mobile Number (03XXXXXXXXX)';
+                newErrors.jazzCashMobile = t('checkout.jazzCashInvalid');
             }
         }
 
@@ -208,11 +210,11 @@ const Checkout: React.FC = () => {
                 data = JSON.parse(text);
             } catch (e) {
                 console.error('Failed to parse backend response JSON:', e);
-                throw new Error('System Error: Invalid response from server');
+                throw new Error(t('checkout.errorInvalidResponse'));
             }
 
             if (!response.ok || !data.success) {
-                const errorMsg = data.error || (data.data && data.data.pp_ResponseMessage) || 'Payment initiation failed';
+                const errorMsg = data.error || (data.data && data.data.pp_ResponseMessage) || t('checkout.errorPaymentFailed');
                 throw new Error(errorMsg);
             }
 
@@ -229,7 +231,7 @@ const Checkout: React.FC = () => {
                     navigate(`/payment/callback1?${params.toString()}`);
                 } else {
                     // Failure
-                    throw new Error(jazzResponse?.pp_ResponseMessage || 'Payment Failed. Please try again.');
+                    throw new Error(jazzResponse?.pp_ResponseMessage || t('checkout.errorPaymentFailedRetry'));
                 }
             } else {
                 // Handle Card / Alfalah Payment - Hosted Payment Page Redirect
@@ -253,12 +255,12 @@ const Checkout: React.FC = () => {
                 }
 
                 // Fallback / Error
-                throw new Error(data.error || 'Invalid response for card payment');
+                throw new Error(data.error || t('checkout.errorInvalidCardResponse'));
             }
 
         } catch (error: any) {
             console.error('Payment processing error:', error);
-            alert(error.message || 'Payment processing failed. Please try again.');
+            alert(error.message || t('checkout.errorProcessingFailed'));
             setIsProcessing(false);
         }
         // Note: setIsProcessing(false) is handled in catch or if needed. 
@@ -281,16 +283,16 @@ const Checkout: React.FC = () => {
                             color: '#666',
                             marginBottom: '1rem'
                         }}>
-                            No items to checkout
+                            {t('checkout.emptyTitle')}
                         </h2>
                         <p style={{
                             color: '#999',
                             marginBottom: '2rem'
                         }}>
-                            Add some items to your cart first
+                            {t('checkout.emptySubtitle')}
                         </p>
                         <Link to="/products" className="btn btn-primary">
-                            Continue Shopping
+                            {t('checkout.continueShopping')}
                         </Link>
                     </div>
                 </div>
@@ -311,13 +313,13 @@ const Checkout: React.FC = () => {
                         color: '#2c5530',
                         marginBottom: '1rem'
                     }}>
-                        Checkout
+                        {t('checkout.pageTitle')}
                     </h1>
                     <p style={{
                         color: '#666',
                         fontSize: '1.1rem'
                     }}>
-                        Complete your order securely
+                        {t('checkout.pageSubtitle')}
                     </p>
                 </div>
 
@@ -349,7 +351,7 @@ const Checkout: React.FC = () => {
                                     gap: '0.5rem'
                                 }}>
                                     <FaUser />
-                                    Personal Information
+                                    {t('checkout.personalInfo')}
                                 </h3>
 
                                 <div style={{
@@ -365,7 +367,7 @@ const Checkout: React.FC = () => {
                                             fontWeight: '500',
                                             color: '#333'
                                         }}>
-                                            First Name *
+                                            {t('checkout.firstNameLabel')}
                                         </label>
                                         <input
                                             type="text"
@@ -396,7 +398,7 @@ const Checkout: React.FC = () => {
                                             fontWeight: '500',
                                             color: '#333'
                                         }}>
-                                            Last Name *
+                                            {t('checkout.lastNameLabel')}
                                         </label>
                                         <input
                                             type="text"
@@ -432,7 +434,7 @@ const Checkout: React.FC = () => {
                                             fontWeight: '500',
                                             color: '#333'
                                         }}>
-                                            Email *
+                                            {t('checkout.emailLabel')}
                                         </label>
                                         <input
                                             type="email"
@@ -462,7 +464,7 @@ const Checkout: React.FC = () => {
                                             fontWeight: '500',
                                             color: '#333'
                                         }}>
-                                            Phone *
+                                            {t('checkout.phoneLabel')}
                                         </label>
                                         <input
                                             type="tel"
@@ -504,7 +506,7 @@ const Checkout: React.FC = () => {
                                     gap: '0.5rem'
                                 }}>
                                     <FaMapMarkerAlt />
-                                    Shipping Address
+                                    {t('checkout.shippingAddress')}
                                 </h3>
 
                                 <div style={{ marginBottom: '1rem' }}>
@@ -514,7 +516,7 @@ const Checkout: React.FC = () => {
                                         fontWeight: '500',
                                         color: '#333'
                                     }}>
-                                        Street Address *
+                                        {t('checkout.streetAddressLabel')}
                                     </label>
                                     <input
                                         type="text"
@@ -549,7 +551,7 @@ const Checkout: React.FC = () => {
                                             fontWeight: '500',
                                             color: '#333'
                                         }}>
-                                            City *
+                                            {t('checkout.cityLabel')}
                                         </label>
                                         <input
                                             type="text"
@@ -579,7 +581,7 @@ const Checkout: React.FC = () => {
                                             fontWeight: '500',
                                             color: '#333'
                                         }}>
-                                            State *
+                                            {t('checkout.stateLabel')}
                                         </label>
                                         <input
                                             type="text"
@@ -609,7 +611,7 @@ const Checkout: React.FC = () => {
                                             fontWeight: '500',
                                             color: '#333'
                                         }}>
-                                            ZIP Code *
+                                            {t('checkout.zipCodeLabel')}
                                         </label>
                                         <input
                                             type="text"
@@ -651,7 +653,7 @@ const Checkout: React.FC = () => {
                                     gap: '0.5rem'
                                 }}>
                                     <FaCreditCard />
-                                    Payment Information
+                                    {t('checkout.paymentInfo')}
                                 </h3>
 
                                 {/* Tabs for Card / MWallet */}
@@ -679,7 +681,7 @@ const Checkout: React.FC = () => {
                                             gap: '0.5rem'
                                         }}
                                     >
-                                        <FaCreditCard /> Card
+                                        <FaCreditCard /> {t('checkout.tabCard')}
                                     </button>
                                     <button
                                         type="button"
@@ -699,7 +701,7 @@ const Checkout: React.FC = () => {
                                             gap: '0.5rem'
                                         }}
                                     >
-                                        <FaMobileAlt /> MWallet (JazzCash)
+                                        <FaMobileAlt /> {t('checkout.tabMwallet')}
                                     </button>
                                     <button
                                         type="button"
@@ -719,7 +721,7 @@ const Checkout: React.FC = () => {
                                             gap: '0.5rem'
                                         }}
                                     >
-                                        <FaCreditCard /> Bank Alfalah
+                                        <FaCreditCard /> {t('checkout.tabAlfalah')}
                                     </button>
                                 </div>
 
@@ -732,11 +734,11 @@ const Checkout: React.FC = () => {
                                         fontSize: '0.9rem',
                                         color: '#666'
                                     }}>
-                                        <strong>How to pay:</strong>
+                                        <strong>{t('checkout.howToPay')}</strong>
                                         <ol style={{ paddingLeft: '1.2rem', marginTop: '0.5rem' }}>
-                                            <li>Click "Complete Order" to be redirected to the Bank Alfalah secure payment page</li>
-                                            <li>Pay securely with your credit or debit card</li>
-                                            <li>You will be brought back here once the payment completes</li>
+                                            <li>{t('checkout.alfalahStep1')}</li>
+                                            <li>{t('checkout.alfalahStep2')}</li>
+                                            <li>{t('checkout.alfalahStep3')}</li>
                                         </ol>
                                     </div>
                                 ) : activeTab === 'card' ? (
@@ -748,11 +750,11 @@ const Checkout: React.FC = () => {
                                         fontSize: '0.9rem',
                                         color: '#666'
                                     }}>
-                                        <strong>How to pay:</strong>
+                                        <strong>{t('checkout.howToPay')}</strong>
                                         <ol style={{ paddingLeft: '1.2rem', marginTop: '0.5rem' }}>
-                                            <li>Click "Pay with Card" to be redirected to the JazzCash secure payment page</li>
-                                            <li>Enter your Card Details Securely</li>
-                                            <li>Follow the instructions to complete the payment</li>
+                                            <li>{t('checkout.cardStep1')}</li>
+                                            <li>{t('checkout.cardStep2')}</li>
+                                            <li>{t('checkout.cardStep3')}</li>
                                         </ol>
 
                                         <div style={{ marginTop: '1rem' }}>
@@ -762,7 +764,7 @@ const Checkout: React.FC = () => {
                                                 fontWeight: '500',
                                                 color: '#333'
                                             }}>
-                                                Mobile Number (Optional)
+                                                {t('checkout.mobileOptionalLabel')}
                                             </label>
                                             <input
                                                 type="text"
@@ -788,7 +790,7 @@ const Checkout: React.FC = () => {
                                                 fontWeight: '500',
                                                 color: '#333'
                                             }}>
-                                                Email (Optional)
+                                                {t('checkout.emailOptionalLabel')}
                                             </label>
                                             <input
                                                 type="email"
@@ -815,11 +817,11 @@ const Checkout: React.FC = () => {
                                         fontSize: '0.9rem',
                                         color: '#666'
                                     }}>
-                                        <strong>How to pay:</strong>
+                                        <strong>{t('checkout.howToPay')}</strong>
                                         <ol style={{ paddingLeft: '1.2rem', marginTop: '0.5rem' }}>
-                                            <li>Click "Pay" to be redirected to the JazzCash secure payment page</li>
-                                            <li>Enter your JazzCash Mobile Number</li>
-                                            <li>Follow the instructions to complete the payment</li>
+                                            <li>{t('checkout.mwalletStep1')}</li>
+                                            <li>{t('checkout.mwalletStep2')}</li>
+                                            <li>{t('checkout.mwalletStep3')}</li>
                                         </ol>
 
                                         <div style={{ marginTop: '1rem' }}>
@@ -829,7 +831,7 @@ const Checkout: React.FC = () => {
                                                 fontWeight: '500',
                                                 color: '#333'
                                             }}>
-                                                JazzCash Mobile Number *
+                                                {t('checkout.jazzCashMobileLabel')}
                                             </label>
                                             <input
                                                 type="text"
@@ -873,7 +875,7 @@ const Checkout: React.FC = () => {
                                     color: '#666'
                                 }}>
                                     <FaLock />
-                                    <span>Your payment information is secure and encrypted</span>
+                                    <span>{t('checkout.securityNotice')}</span>
                                 </div>
                             </div>
 
@@ -908,12 +910,12 @@ const Checkout: React.FC = () => {
                                             borderRadius: '50%',
                                             animation: 'spin 1s linear infinite'
                                         }} />
-                                        Processing...
+                                        {t('checkout.processing')}
                                     </>
                                 ) : (
                                     <>
                                         <FaLock />
-                                        Complete Order - PKR {total.toLocaleString()}
+                                        {t('checkout.completeOrderBtn', { total: total.toLocaleString() })}
                                     </>
                                 )}
                             </button>
@@ -929,7 +931,7 @@ const Checkout: React.FC = () => {
                         position: 'sticky',
                         top: '2rem'
                     }}>
-                        <h3 className="premium-font" style={{ fontSize: '1.8rem', marginBottom: '25px', color: '#000000', letterSpacing: '-0.5px' }}>Order Summary</h3>
+                        <h3 className="premium-font" style={{ fontSize: '1.8rem', marginBottom: '25px', color: '#000000', letterSpacing: '-0.5px' }}>{t('checkout.orderSummary')}</h3>
 
                         {/* Order Items */}
                         <div style={{ marginBottom: '1.5rem' }}>
@@ -954,7 +956,7 @@ const Checkout: React.FC = () => {
                                             margin: 0,
                                             color: '#666'
                                         }}>
-                                            Qty: {item.quantity}
+                                            {t('checkout.qty', { count: item.quantity })}
                                         </p>
                                     </div>
                                     <span style={{
@@ -970,13 +972,13 @@ const Checkout: React.FC = () => {
                         {/* Totals */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', paddingBottom: '20px', borderBottom: '1px dashed #e0e0e0' }}>
                             <div className="summary-row" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span style={{ color: '#555' }}>Subtotal</span>
+                                <span style={{ color: '#555' }}>{t('checkout.subtotal')}</span>
                                 <span style={{ fontWeight: 600, fontSize: '1.1rem', color: '#000000' }}>PKR {subtotal.toLocaleString()}</span>
                             </div>
                             <div className="summary-row" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span style={{ color: '#555' }}>Shipping</span>
+                                <span style={{ color: '#555' }}>{t('checkout.shipping')}</span>
                                 {shippingCost === 0 ? (
-                                    <span style={{ color: '#108960', fontWeight: 'bold', background: 'rgba(16, 137, 96, 0.1)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.9rem' }}>Complimentary</span>
+                                    <span style={{ color: '#108960', fontWeight: 'bold', background: 'rgba(16, 137, 96, 0.1)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.9rem' }}>{t('checkout.complimentary')}</span>
                                 ) : (
                                     <span style={{ fontWeight: 600, color: '#000000' }}>PKR {shippingCost}</span>
                                 )}
@@ -984,7 +986,7 @@ const Checkout: React.FC = () => {
                         </div>
 
                         <div className="summary-total" style={{ borderTop: 'none', marginTop: '20px', paddingTop: '0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.2rem', fontWeight: 600, color: '#000000' }}>Total</span>
+                            <span style={{ fontSize: '1.2rem', fontWeight: 600, color: '#000000' }}>{t('checkout.total')}</span>
                             <span style={{ fontSize: '2rem', color: '#108960', fontWeight: 700 }}>PKR {total.toLocaleString()}</span>
                         </div>
                     </div>

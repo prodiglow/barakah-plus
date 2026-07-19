@@ -15,6 +15,7 @@ import {
     CircularProgress
 } from '@mui/material';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { getAllProducts } from '../../services/islamicProductService';
 import { useCart } from '../../context/CartContext';
 
@@ -30,6 +31,7 @@ interface Product {
 }
 
 const AllProductsPage: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ const AllProductsPage: React.FC = () => {
                 setProducts(data);
             } catch (err) {
                 console.error("Error fetching products:", err);
-                setError("Failed to load products. Please try again later.");
+                setError(t('products.loadError'));
             } finally {
                 setLoading(false);
             }
@@ -54,7 +56,7 @@ const AllProductsPage: React.FC = () => {
 
     const handleAddToCart = (product: Product) => {
         if (product.stock <= 0) {
-            toast.warning(`${product.name} is out of stock!`);
+            toast.warning(t('products.outOfStockToast', { name: product.name }));
             return;
         }
         addToCart({
@@ -65,7 +67,7 @@ const AllProductsPage: React.FC = () => {
             price: product.salePrice,
             quantity: 1
         });
-        toast.success(`${product.name} added to cart!`);
+        toast.success(t('products.addedToCartToast', { name: product.name }));
     };
 
     if (loading) {
@@ -92,7 +94,7 @@ const AllProductsPage: React.FC = () => {
                         color: '#333'
                     }}
                 >
-                    All Products
+                    {t('products.pageTitle')}
                 </Typography>
 
                 {error ? (
@@ -117,7 +119,7 @@ const AllProductsPage: React.FC = () => {
                                     {/* Sale Badge */}
                                     {product.salePrice < product.actualPrice && (
                                         <Chip
-                                            label="SALE"
+                                            label={t('common.sale')}
                                             color="error"
                                             size="small"
                                             sx={{
@@ -171,7 +173,7 @@ const AllProductsPage: React.FC = () => {
                                                         }
                                                     }}
                                                 >
-                                                    View
+                                                    {t('common.view')}
                                                 </Button>
                                             </Grid>
                                             <Grid size={{ xs: 6 }}>
@@ -184,7 +186,7 @@ const AllProductsPage: React.FC = () => {
                                                         '&:hover': { bgcolor: '#0d704e' }
                                                     }}
                                                 >
-                                                    Add to Cart
+                                                    {t('common.addToCart')}
                                                 </Button>
                                             </Grid>
                                         </Grid>

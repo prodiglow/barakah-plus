@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button, Container, Grid, Card, CardMedia, CardContent, CardActions, Chip, Stack, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { getAllProducts } from '../services/islamicProductService';
 import { useCart } from '../context/CartContext';
 
@@ -18,6 +19,7 @@ interface Product {
 
 const HomePage1: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const { addToCart } = useCart();
@@ -38,7 +40,7 @@ const HomePage1: React.FC = () => {
 
     const handleAddToCart = (product: Product) => {
         if (product.stock <= 0) {
-            toast.warning(`${product.name} is out of stock!`);
+            toast.warning(t('home.outOfStockToast', { name: product.name }));
             return;
         }
         addToCart({
@@ -49,7 +51,7 @@ const HomePage1: React.FC = () => {
             price: product.salePrice,
             quantity: 1
         });
-        toast.success(`${product.name} added to cart!`);
+        toast.success(t('home.addedToCartToast', { name: product.name }));
     };
 
     // Get random 4 products for featured section
@@ -80,7 +82,7 @@ const HomePage1: React.FC = () => {
         }}>
             {product.salePrice < product.actualPrice && (
                 <Chip
-                    label="SALE"
+                    label={t('common.sale')}
                     color="error"
                     size="small"
                     sx={{
@@ -133,7 +135,7 @@ const HomePage1: React.FC = () => {
                         }
                     }}
                 >
-                    View
+                    {t('common.view')}
                 </Button>
                 <Button
                     variant="contained"
@@ -145,7 +147,7 @@ const HomePage1: React.FC = () => {
                         '&:hover': { bgcolor: product.stock <= 0 ? '#ccc' : '#00796B' }
                     }}
                 >
-                    {product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                    {product.stock <= 0 ? t('common.outOfStock') : t('common.addToCart')}
                 </Button>
             </CardActions>
         </Card>
@@ -165,7 +167,7 @@ const HomePage1: React.FC = () => {
                             onClick={() => { window.scrollTo(0, 0); navigate(categoryLink); }}
                             sx={{ borderColor: '#009688', color: '#009688', '&:hover': { bgcolor: '#009688', color: 'white' } }}
                         >
-                            View All
+                            {t('common.viewAll')}
                         </Button>
                     )}
                 </Box>
@@ -229,7 +231,7 @@ const HomePage1: React.FC = () => {
                         component="div"
                         sx={{ mb: 1, fontWeight: 500 }}
                     >
-                        Our Beloved Nabi ﷺ said,
+                        {t('home.hadithIntro')}
                     </Typography>
 
                     <Typography
@@ -242,7 +244,7 @@ const HomePage1: React.FC = () => {
                             fontSize: { xs: '1.5rem', md: '2.5rem' }
                         }}
                     >
-                        “The Key to paradise (Jannah) is salaah”
+                        {t('home.hadithText')}
                     </Typography>
 
                     <Box sx={{ mt: 8 }}>
@@ -252,7 +254,7 @@ const HomePage1: React.FC = () => {
                             component="div"
                             sx={{ mb: 3, letterSpacing: 1 }}
                         >
-                            "Wrap yourself in faith, shop in Kun"
+                            {t('home.slogan')}
                         </Typography>
 
                         {/* Button */}
@@ -275,7 +277,7 @@ const HomePage1: React.FC = () => {
                                 transition: 'all 0.3s'
                             }}
                         >
-                            Shop Now
+                            {t('common.shopNow')}
                         </Button>
                     </Box>
                 </Container>
@@ -285,10 +287,10 @@ const HomePage1: React.FC = () => {
             <Box sx={{ py: 10, bgcolor: 'white', textAlign: 'center', width: '100%' }}>
                 <Container maxWidth="lg">
                     <Typography variant="h5" sx={{ color: '#009688', fontWeight: 'bolder', mb: 2, width: '100%', fontSize: '2rem' }}>
-                        We provide affordable, Luxurious, high-quality Islamic Accessories
+                        {t('home.featuresTitle')}
                     </Typography>
                     <Typography variant="body1" sx={{ color: '#666', mb: 8, mx: 'auto', lineHeight: 1.8, width: '100%', fontSize: '1.2rem' }}>
-                        Welcome to KUNpk, Pakistan's No.1 Premium Islamic Product Store.Where You find Trendy Islamic lifestyle Products Online.Try Our Best Islamic Essentials at KUNpk & enhance your Spiritual journey with our Islamic Accessories.
+                        {t('home.featuresSubtitle')}
                     </Typography>
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: 4 }}>
@@ -299,7 +301,7 @@ const HomePage1: React.FC = () => {
 
                                 display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}>
-                                <img src="https://kunpk.com/wp-content/uploads/2024/12/last-icon-1-900x900.png" alt="All Over Pakistan" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                <img src="https://kunpk.com/wp-content/uploads/2024/12/last-icon-1-900x900.png" alt={t('home.featureAllOverPakistan')} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                             </Box>
 
                         </Box>
@@ -310,7 +312,7 @@ const HomePage1: React.FC = () => {
                                 width: 350, height: 350, mb: 2,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}>
-                                <img src="https://kunpk.com/wp-content/uploads/2024/12/last-icon-2--900x900.png" alt="Secure Payment" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                <img src="https://kunpk.com/wp-content/uploads/2024/12/last-icon-2--900x900.png" alt={t('home.featureSecurePayment')} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                             </Box>
 
                         </Box>
@@ -322,7 +324,7 @@ const HomePage1: React.FC = () => {
 
                                 display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}>
-                                <img src="https://kunpk.com/wp-content/uploads/2024/12/last-icon-3-900x900.png" alt="Free Shipping" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                <img src="https://kunpk.com/wp-content/uploads/2024/12/last-icon-3-900x900.png" alt={t('home.featureFreeShipping')} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                             </Box>
 
                         </Box>
@@ -334,28 +336,28 @@ const HomePage1: React.FC = () => {
             <Box sx={{ pb: 20, bgcolor: 'white', textAlign: 'center' }}>
                 <Container maxWidth="lg">
                     <Typography variant="h4" sx={{ color: '#009688', fontWeight: 'bold', mb: 6, fontFamily: "'Playfair Display', serif" }}>
-                        Shop by Category
+                        {t('home.shopByCategory')}
                     </Typography>
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 6 }}>
                         {[
                             {
-                                name: "Prayer Mats & Caps",
+                                name: t('home.categoryPrayerMats'),
                                 image: "https://res.cloudinary.com/debszasgn/image/upload/v1769516399/5b73a0a574a2dcb2266074cd9fa5b040ccbe3d82_musvlv.jpg",
                                 link: "/islamic-merchandise/Prayers%20Mats%20&%20Caps"
                             },
                             {
-                                name: "Accessories",
+                                name: t('home.categoryAccessories'),
                                 image: "https://res.cloudinary.com/debszasgn/image/upload/v1769516399/e7eaed9644f2f25623e9f6937841392545185e74_md8jcb.jpg",
                                 link: "/islamic-merchandise/Accessories"
                             },
                             {
-                                name: "Islamic Books",
+                                name: t('home.categoryIslamicBooks'),
                                 image: "https://res.cloudinary.com/debszasgn/image/upload/v1769516400/3ced35ac20c2a61a85bf8d77d5eaca480118afb0_jmji9j.jpg",
                                 link: "/islamic-merchandise/Islamic%20books%20&%20Literature"
                             },
                             {
-                                name: "Tasbih",
+                                name: t('home.categoryTasbih'),
                                 image: "https://res.cloudinary.com/debszasgn/image/upload/v1769516399/4959111f78d2e9354c03ab5be655edad7e12e9b1_avo6gr.jpg",
                                 link: "/islamic-merchandise/Tasbih"
                             }
@@ -433,7 +435,7 @@ const HomePage1: React.FC = () => {
                                 }
                             }}
                         >
-                            Show All Categorys
+                            {t('home.showAllCategories')}
                         </Button>
                     </Box>
                 </Container>
@@ -465,7 +467,7 @@ const HomePage1: React.FC = () => {
                             }} />
                             <img
                                 src="https://res.cloudinary.com/debszasgn/image/upload/v1769516400/3ced35ac20c2a61a85bf8d77d5eaca480118afb0_jmji9j.jpg"
-                                alt="Islamic Products"
+                                alt={t('home.islamicProductsAlt')}
                                 style={{
                                     width: '100%',
                                     height: '550px',
@@ -480,13 +482,13 @@ const HomePage1: React.FC = () => {
                         {/* Text Content */}
                         <Box sx={{ flex: '1 1 400px' }}>
                             <Typography variant="h4" sx={{ color: '#009688', fontWeight: 'bold', mb: 3, fontFamily: "'Playfair Display', serif" }}>
-                                Why Choose Baraka Plus for Online Shopping?
+                                {t('home.whyChooseTitle')}
                             </Typography>
                             <Typography variant="body1" sx={{ color: '#555', mb: 3, lineHeight: 1.8, fontSize: '1rem' }}>
-                                Our Islamic Lifestyle products are built to last, combining beauty with durability. We provide you best Muslim essentials in our Online Islamic Products Website in Pakistan. All the Prayer mats, Tasbih, Rugs, Namaz Caps for Men, Namaz Chaddar for women, and Calligraphy Islamic Accessories are made with luxury and Comfort materials. Baraka Plus unique Muslim designs Products that you won't find elsewhere in Pakistan because we aim to provide authentic products to customers. Customer priority, Comfortability, and trustworthiness mean a lot to us.
+                                {t('home.whyChooseBody')}
                             </Typography>
                             <Typography variant="body1" sx={{ color: '#333', fontStyle: 'italic', mb: 4, fontWeight: 500 }}>
-                                "Your trust is our responsibility"
+                                {t('home.trustQuote')}
                             </Typography>
                             <Button
                                 variant="outlined"
@@ -505,7 +507,7 @@ const HomePage1: React.FC = () => {
                                     }
                                 }}
                             >
-                                Explore Our Shop
+                                {t('home.exploreShopBtn')}
                             </Button>
                         </Box>
                     </Box>
@@ -521,7 +523,7 @@ const HomePage1: React.FC = () => {
                 <>
                     {/* Featured Products */}
                     <ProductSection
-                        title="Featured Products"
+                        title={t('home.sectionFeatured')}
                         products={getFeaturedProducts()}
                         categoryLink="/shop-islamic"
                     />
@@ -529,7 +531,7 @@ const HomePage1: React.FC = () => {
                     {/* Prayer Mats & Caps */}
                     <Box sx={{ bgcolor: '#f9f9f9' }}>
                         <ProductSection
-                            title="Prayer Mats & Caps"
+                            title={t('home.sectionPrayerMats')}
                             products={getProductsByCategory("Prayers Mats & Caps")}
                             categoryLink="/islamic-merchandise/Prayers%20Mats%20&%20Caps"
                         />
@@ -537,7 +539,7 @@ const HomePage1: React.FC = () => {
 
                     {/* Accessories */}
                     <ProductSection
-                        title="Accessories"
+                        title={t('home.sectionAccessories')}
                         products={getProductsByCategory("Accessories")}
                         categoryLink="/islamic-merchandise/Accessories"
                     />
@@ -545,7 +547,7 @@ const HomePage1: React.FC = () => {
                     {/* Islamic Books */}
                     <Box sx={{ bgcolor: '#f9f9f9' }}>
                         <ProductSection
-                            title="Islamic Books & Literature"
+                            title={t('home.sectionBooks')}
                             products={getProductsByCategory("Islamic books & Literature")}
                             categoryLink="/islamic-merchandise/Islamic%20books%20&%20Literature"
                         />
@@ -553,7 +555,7 @@ const HomePage1: React.FC = () => {
 
                     {/* Tasbih */}
                     <ProductSection
-                        title="Tasbih"
+                        title={t('home.sectionTasbih')}
                         products={getProductsByCategory("Tasbih")}
                         categoryLink="/islamic-merchandise/Tasbih"
                     />

@@ -1,8 +1,10 @@
 import React from "react";
 import { Box, Container, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import scholarBg from "../../assets/scholarhero1.jpg";
 
 const ScholarHeroImg: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -48,7 +50,7 @@ const ScholarHeroImg: React.FC = () => {
             fontSize: { xs: "1.8rem", sm: "2.2rem", md: "3rem" },
           }}
         >
-          Meet Our <br /> Verified Scholars
+          {t("scholars.heroTitleLine1")} <br /> {t("scholars.heroTitleLine2")}
         </Typography>
         <Typography
           variant="subtitle1"
@@ -58,8 +60,7 @@ const ScholarHeroImg: React.FC = () => {
             fontSize: { xs: "0.9rem", sm: "1rem", md: "1.2rem" },
           }}
         >
-          Every reciter, Hafiz, or Qari listed here is approved, experienced,
-          and trusted.
+          {t("scholars.heroSubtitle")}
         </Typography>
       </Container>
 

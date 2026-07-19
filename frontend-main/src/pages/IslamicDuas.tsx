@@ -9,6 +9,7 @@ import {
     Avatar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getAllCategories } from "../services/categoryService";
 import { Category } from "../services/duaService";
 
@@ -18,6 +19,7 @@ interface CategoryWithId extends Category {
 }
 
 const IslamicDuas: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [categories, setCategories] = useState<CategoryWithId[]>([]);
     const [loading, setLoading] = useState(true);
@@ -122,7 +124,7 @@ const IslamicDuas: React.FC = () => {
                         textAlign: "center"
                     }}
                 >
-                    Dhikr & Du’a
+                    {t('duas.heroTitle')}
                 </Typography>
 
                 {/* Categories Grid */}
@@ -131,7 +133,7 @@ const IslamicDuas: React.FC = () => {
                     fontWeight="bold"
                     sx={{ color: "#00BFA5", mb: 3 }}
                 >
-                    Categories
+                    {t('duas.categoriesHeading')}
                 </Typography>
                 <Grid container spacing={3} mb={6}>
                     {categories.map((category) => renderCategoryCard(category))}

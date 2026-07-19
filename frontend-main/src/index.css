@@ -44,3 +44,28 @@ body, html, #root {
   scrollbar-width: thin;
   scrollbar-color: #04aa6d #f1f1f1;
 }
+
+/* ===== RTL / Urdu support ===== */
+html[dir="rtl"] body {
+  text-align: right;
+}
+
+/* Nastaliq Urdu needs extra line-height to breathe */
+body.urdu-font {
+  line-height: 2;
+}
+
+/* Keep prices, phone numbers, emails and codes left-to-right even in RTL */
+[dir="rtl"] .force-ltr,
+.force-ltr {
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/* MUI drawers/menus anchored "right" read better flipped in RTL, but we let
+   MUI's own logical handling do most of the work; this just fixes stray
+   text alignment inside common containers. */
+html[dir="rtl"] .MuiListItemText-root,
+html[dir="rtl"] .MuiTypography-root {
+  text-align: inherit;
+}

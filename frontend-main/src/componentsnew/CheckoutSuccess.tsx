@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FaCheckCircle, FaHome, FaShoppingBag } from 'react-icons/fa';
 
 const CheckoutSuccess: React.FC = () => {
+    const { t } = useTranslation();
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -32,7 +35,7 @@ const CheckoutSuccess: React.FC = () => {
                         color: '#2c5530',
                         marginBottom: '1rem'
                     }}>
-                        Order Confirmed!
+                        {t('checkoutSuccess.title')}
                     </h1>
 
                     <p style={{
@@ -41,8 +44,7 @@ const CheckoutSuccess: React.FC = () => {
                         marginBottom: '2rem',
                         lineHeight: '1.6'
                     }}>
-                        Thank you for your purchase! Your order has been successfully placed and
-                        you will receive a confirmation email shortly.
+                        {t('checkoutSuccess.subtitle')}
                     </p>
 
                     <div style={{
@@ -57,7 +59,7 @@ const CheckoutSuccess: React.FC = () => {
                             color: '#2c5530',
                             marginBottom: '1rem'
                         }}>
-                            What's Next?
+                            {t('checkoutSuccess.whatsNextTitle')}
                         </h3>
                         <ul style={{
                             listStyle: 'none',
@@ -73,7 +75,7 @@ const CheckoutSuccess: React.FC = () => {
                                 color: '#000000'
                             }}>
                                 <span style={{ color: '#4CAF50' }}>✓</span>
-                                Order confirmation email sent
+                                {t('checkoutSuccess.stepEmailSent')}
                             </li>
                             <li style={{
                                 padding: '0.5rem 0',
@@ -83,7 +85,7 @@ const CheckoutSuccess: React.FC = () => {
                                 color: '#000000'
                             }}>
                                 <span style={{ color: '#4CAF50' }}>✓</span>
-                                Payment processed successfully
+                                {t('checkoutSuccess.stepPaymentProcessed')}
                             </li>
                             <li style={{
                                 padding: '0.5rem 0',
@@ -93,7 +95,7 @@ const CheckoutSuccess: React.FC = () => {
                                 color: '#000000'
                             }}>
                                 <span style={{ color: '#FFA726' }}>⏳</span>
-                                Order being prepared for shipment
+                                {t('checkoutSuccess.stepPreparing')}
                             </li>
                             <li style={{
                                 padding: '0.5rem 0',
@@ -103,7 +105,7 @@ const CheckoutSuccess: React.FC = () => {
                                 color: '#000000'
                             }}>
                                 <span style={{ color: '#FFA726' }}>⏳</span>
-                                Tracking information will be sent via email
+                                {t('checkoutSuccess.stepTracking')}
                             </li>
                         </ul>
                     </div>
@@ -127,7 +129,7 @@ const CheckoutSuccess: React.FC = () => {
                             border: '2px solid #1E4620'
                         }}>
                             <FaHome />
-                            Back to Home
+                            {t('checkoutSuccess.backToHomeBtn')}
                         </Link>
 
                         <Link to="/shop-islamic" onClick={() => window.scrollTo(0, 0)} className="btn" style={{
@@ -143,7 +145,7 @@ const CheckoutSuccess: React.FC = () => {
                             border: '2px solid #1E4620'
                         }}>
                             <FaShoppingBag />
-                            Continue Shopping
+                            {t('checkoutSuccess.continueShoppingBtn')}
                         </Link>
                     </div>
                 </div>

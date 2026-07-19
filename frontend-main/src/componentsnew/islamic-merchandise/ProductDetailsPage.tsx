@@ -17,6 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { getProductById } from '../../services/islamicProductService';
 import { useCart } from '../../context/CartContext';
 
@@ -32,6 +33,7 @@ interface Product {
 }
 
 const ProductDetailsPage: React.FC = () => {
+    const { t } = useTranslation();
     const { productId } = useParams<{ productId: string }>();
     const navigate = useNavigate();
     const [product, setProduct] = useState<Product | null>(null);
@@ -48,7 +50,7 @@ const ProductDetailsPage: React.FC = () => {
                 setProduct(data);
             } catch (err) {
                 console.error("Error fetching product details:", err);
-                setError("Failed to load product details.");
+                setError(t('product.loadError'));
             } finally {
                 setLoading(false);
             }
@@ -67,7 +69,7 @@ const ProductDetailsPage: React.FC = () => {
     const handleAddToCart = () => {
         if (!product) return;
         if (product.stock <= 0) {
-            toast.warning(`${product.name} is out of stock!`);
+            toast.warning(t('product.outOfStockToast', { name: product.name }));
             return;
         }
         addToCart({
@@ -78,7 +80,7 @@ const ProductDetailsPage: React.FC = () => {
             price: product.salePrice,
             quantity: quantity
         });
-        toast.success(`${quantity} x ${product.name} added to cart!`);
+        toast.success(t('product.addedToCartToast', { quantity, name: product.name }));
     };
 
     if (loading) {
@@ -92,9 +94,9 @@ const ProductDetailsPage: React.FC = () => {
     if (error || !product) {
         return (
             <Box sx={{ textAlign: 'center', mt: 10 }}>
-                <Typography variant="h5" color="error">{error || "Product not found"}</Typography>
+                <Typography variant="h5" color="error">{error || t('product.notFound')}</Typography>
                 <Button variant="contained" onClick={() => navigate(-1)} sx={{ mt: 2, bgcolor: '#108960' }}>
-                    Go Back
+                    {t('product.goBack')}
                 </Button>
             </Box>
         );
@@ -109,7 +111,7 @@ const ProductDetailsPage: React.FC = () => {
                     onClick={() => navigate(-1)}
                     sx={{ mb: 4, color: '#333' }}
                 >
-                    Back to Products
+                    {t('product.backToProducts')}
                 </Button>
 
                 <Grid container spacing={6}>
@@ -188,7 +190,7 @@ const ProductDetailsPage: React.FC = () => {
                                             PKR {product.actualPrice.toLocaleString()}
                                         </Typography>
                                         <Chip
-                                            label={`${Math.round(((product.actualPrice - product.salePrice) / product.actualPrice) * 100)}% OFF`}
+                                            label={t('product.percentOff', { percent: Math.round(((product.actualPrice - product.salePrice) / product.actualPrice) * 100) })}
                                             color="error"
                                             size="small"
                                             sx={{ fontWeight: 'bold' }}
@@ -201,7 +203,7 @@ const ProductDetailsPage: React.FC = () => {
 
                             {/* Quantity Selector */}
                             <Box sx={{ mb: 4 }}>
-                                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>Quantity</Typography>
+                                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>{t('product.quantity')}</Typography>
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                     <Box
                                         sx={{
@@ -240,7 +242,7 @@ const ProductDetailsPage: React.FC = () => {
                                         flexGrow: { xs: 1, md: 0 }
                                     }}
                                 >
-                                    Add to Cart
+                                    {t('common.addToCart')}
                                 </Button>
                             </Stack>
                         </Box>
@@ -250,7 +252,7 @@ const ProductDetailsPage: React.FC = () => {
                 {/* Description Section */}
                 <Box sx={{ mt: 8 }}>
                     <Typography variant="h5" fontWeight="bold" sx={{ mb: 3, color: '#333' }}>
-                        Description
+                        {t('product.description')}
                     </Typography>
                     <Divider sx={{ mb: 3 }} />
                     <Typography variant="body1" sx={{ color: '#616161', lineHeight: 1.8 }}>

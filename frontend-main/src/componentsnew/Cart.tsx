@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCart } from '../context/CartContext';
 import { FaPlus, FaMinus, FaTrash, FaShoppingBag, FaArrowRight } from 'react-icons/fa';
 
@@ -13,6 +14,7 @@ interface CartItem {
 }
 
 const Cart: React.FC = () => {
+    const { t } = useTranslation();
     const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart() as {
         items: CartItem[];
         updateQuantity: (id: number | string, quantity: number) => void;
@@ -57,8 +59,8 @@ const Cart: React.FC = () => {
                 <div className="container">
                     <div className="empty-cart-card">
                         <div className="empty-cart-icon"><FaShoppingBag /></div>
-                        <h2 className="premium-font" style={{ fontSize: '2.5rem', marginBottom: '15px' }}>Your Cart Awaits</h2>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '40px', fontSize: '1.1rem' }}>Start your journey by adding spiritual treasures to your collection.</p>
+                        <h2 className="premium-font" style={{ fontSize: '2.5rem', marginBottom: '15px' }}>{t('cart.emptyCartTitle')}</h2>
+                        <p style={{ color: 'var(--text-muted)', marginBottom: '40px', fontSize: '1.1rem' }}>{t('cart.emptyCartSubtitle')}</p>
                         <Link to="/shop-islamic" className="btn btn-primary" style={{
                             display: 'inline-block',
                             backgroundColor: '#108960',
@@ -69,7 +71,7 @@ const Cart: React.FC = () => {
                             fontWeight: '600',
                             fontSize: '1rem',
                             boxShadow: '0 4px 15px rgba(16, 137, 96, 0.2)'
-                        }}>Continue Exploring</Link>
+                        }}>{t('cart.continueExploringBtn')}</Link>
                     </div>
                 </div>
             </div>
@@ -204,23 +206,23 @@ const Cart: React.FC = () => {
                         ))}
                         {items.length > 0 && (
                             <div style={{ padding: '30px', textAlign: 'right', borderTop: '1px solid #f0f0f0', background: '#fafafa' }}>
-                                <button className="btn" style={{ border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', background: 'transparent' }} onClick={clearCart}>Clear Shopping Cart</button>
+                                <button className="btn" style={{ border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', background: 'transparent' }} onClick={clearCart}>{t('cart.clearCartBtn')}</button>
                             </div>
                         )}
                     </div>
 
                     <div className="summary-card">
-                        <h3 className="premium-font" style={{ fontSize: '1.8rem', marginBottom: '25px', color: '#000000', letterSpacing: '-0.5px' }}>Order Summary</h3>
+                        <h3 className="premium-font" style={{ fontSize: '1.8rem', marginBottom: '25px', color: '#000000', letterSpacing: '-0.5px' }}>{t('cart.orderSummaryTitle')}</h3>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', paddingBottom: '20px', borderBottom: '1px dashed #e0e0e0' }}>
                             <div className="summary-row">
-                                <span style={{ color: '#555' }}>Subtotal</span>
+                                <span style={{ color: '#555' }}>{t('cart.subtotalLabel')}</span>
                                 <span style={{ fontWeight: 600, fontSize: '1.1rem' }}>PKR {subtotal.toLocaleString()}</span>
                             </div>
                             <div className="summary-row">
-                                <span style={{ color: '#555' }}>Shipping</span>
+                                <span style={{ color: '#555' }}>{t('cart.shippingLabel')}</span>
                                 {shippingCost === 0 ? (
-                                    <span style={{ color: '#108960', fontWeight: 'bold', background: 'rgba(16, 137, 96, 0.1)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.9rem' }}>Complimentary</span>
+                                    <span style={{ color: '#108960', fontWeight: 'bold', background: 'rgba(16, 137, 96, 0.1)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.9rem' }}>{t('cart.complimentaryLabel')}</span>
                                 ) : (
                                     <span style={{ fontWeight: 600 }}>PKR {shippingCost}</span>
                                 )}
@@ -228,16 +230,16 @@ const Cart: React.FC = () => {
                         </div>
 
                         <div className="summary-total" style={{ borderTop: 'none', marginTop: '20px', paddingTop: '0', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>Total</span>
+                            <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>{t('cart.totalLabel')}</span>
                             <span style={{ fontSize: '2rem', color: '#108960', fontWeight: 700 }}>PKR {total.toLocaleString()}</span>
                         </div>
 
                         <Link to="/checkout1" className="btn btn-primary" style={{ width: '85%', margin: '40px auto 0', background: '#108960', color: '#ffffff', padding: '18px', fontSize: '1.1rem', borderRadius: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 8px 20px rgba(16, 137, 96, 0.2)' }}>
-                            PROCEED TO CHECKOUT <FaArrowRight />
+                            {t('cart.proceedToCheckoutBtn')} <FaArrowRight />
                         </Link>
 
                         <div style={{ marginTop: '30px', textAlign: 'center', opacity: '0.7', fontSize: '0.85rem', color: '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                            <span>🔒</span> Secured with 256-bit SSL encryption
+                            <span>🔒</span> {t('cart.secureCheckoutNote')}
                         </div>
                     </div>
                 </div>

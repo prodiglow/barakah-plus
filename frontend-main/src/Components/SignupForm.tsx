@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Button,
@@ -36,6 +37,7 @@ interface SignupFormProps {
 
 const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [isSignup, setIsSignup] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false); // New state
@@ -158,11 +160,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
 
   // Password Strength Checks
   const passwordCriteria = [
-    { label: "At least 8 characters", met: formData.password.length >= 8 },
-    { label: "At least 1 lowercase letter", met: /[a-z]/.test(formData.password) },
-    { label: "At least 1 uppercase letter", met: /[A-Z]/.test(formData.password) },
-    { label: "At least 1 number", met: /\d/.test(formData.password) },
-    { label: "At least 1 special character", met: /[\W_]/.test(formData.password) },
+    { label: t('auth.criteriaMinChars'), met: formData.password.length >= 8 },
+    { label: t('auth.criteriaLowercase'), met: /[a-z]/.test(formData.password) },
+    { label: t('auth.criteriaUppercase'), met: /[A-Z]/.test(formData.password) },
+    { label: t('auth.criteriaNumber'), met: /\d/.test(formData.password) },
+    { label: t('auth.criteriaSpecial'), met: /[\W_]/.test(formData.password) },
   ];
 
   const isPasswordStrong = passwordCriteria.every((c) => c.met);
@@ -175,7 +177,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size must be less than 5MB");
+        toast.error(t('auth.imageSizeError'));
         return;
       }
       setProfileImage(file);
@@ -186,18 +188,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
 
   const handleNext = async () => {
     if (!formData.name || !formData.phone || !formData.email || !formData.password || !formData.confirmPassword) {
-      toast.error("Please fill all fields");
+      toast.error(t('auth.fillAllFields'));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setFieldErrors((prev) => ({ ...prev, confirmPassword: "Passwords do not match" }));
+      setFieldErrors((prev) => ({ ...prev, confirmPassword: t('auth.passwordsDoNotMatch') }));
       return;
     }
 
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!strongPasswordRegex.test(formData.password)) {
-      toast.error("Password must contain at least 8 characters, including uppercase, lowercase, number, and special character");
+      toast.error(t('auth.passwordRequirements'));
       return;
     }
 
@@ -212,11 +214,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
       if (errorData?.fields) {
         setFieldErrors({
           ...fieldErrors,
-          email: errorData.fields.email ? "email already used" : "",
-          phone: errorData.fields.phone ? "number already used" : "",
+          email: errorData.fields.email ? t('auth.emailAlreadyUsed') : "",
+          phone: errorData.fields.phone ? t('auth.numberAlreadyUsed') : "",
         });
       } else {
-        const errorMsg = errorData?.message || "Something went wrong";
+        const errorMsg = errorData?.message || t('auth.somethingWentWrong');
         toast.error(errorMsg);
       }
     }
@@ -225,7 +227,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
 
   const handleSendPhoneOtp = async () => {
     if (!formData.phone) {
-      toast.error("Please enter phone number");
+      toast.error(t('auth.enterPhoneNumber'));
       return;
     }
     try {
@@ -243,17 +245,17 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
         }, 500);
       }
 
-      toast.success("OTP sent to your phone");
+      toast.success(t('auth.otpSentPhone'));
 
     } catch (err) {
-      toast.error("Failed to send phone OTP");
+      toast.error(t('auth.failedSendPhoneOtp'));
     }
   };
 
   const handleVerifyPhone = async (otpOverride?: string) => {
     const otpToVerify = otpOverride || phoneOtp;
     if (otpToVerify.length !== 6) {
-      toast.error("Please enter 6-digit OTP");
+      toast.error(t('auth.enterSixDigitOtp'));
       return;
     }
     try {
@@ -262,35 +264,35 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
         setIsPhoneVerified(true);
         setVerifiedPhone(formData.phone);
         setPhoneOtpSent(false);
-        toast.success("Phone verified successfully!");
+        toast.success(t('auth.phoneVerifiedSuccess'));
 
       } else {
-        toast.error(res.message || "Invalid OTP");
+        toast.error(res.message || t('auth.invalidOtp'));
       }
     } catch (err) {
-      toast.error("Verification failed");
+      toast.error(t('auth.verificationFailed'));
     }
   };
 
   const handleSendEmailOtp = async () => {
     if (!formData.email) {
-      toast.error("Please enter email");
+      toast.error(t('auth.enterEmail'));
       return;
     }
     try {
       await sendOtp(formData.email);
       setEmailOtpSent(true);
       setEmailCountdown(60);
-      toast.success("OTP sent to your email");
+      toast.success(t('auth.otpSentEmail'));
 
     } catch (err) {
-      toast.error("Failed to send email OTP");
+      toast.error(t('auth.failedSendEmailOtp'));
     }
   };
 
   const handleVerifyEmail = async () => {
     if (emailOtp.length !== 6) {
-      toast.error("Please enter 6-digit OTP");
+      toast.error(t('auth.enterSixDigitOtp'));
       return;
     }
     try {
@@ -299,13 +301,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
         setIsEmailVerified(true);
         setVerifiedEmail(formData.email);
         setEmailOtpSent(false);
-        toast.success("Email verified successfully!");
+        toast.success(t('auth.emailVerifiedSuccess'));
 
       } else {
-        toast.error(res.message || "Invalid OTP");
+        toast.error(res.message || t('auth.invalidOtp'));
       }
     } catch (err) {
-      toast.error("Verification failed");
+      toast.error(t('auth.verificationFailed'));
     }
   };
 
@@ -317,7 +319,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
     }
 
     if (!isPhoneVerified) {
-      toast.error("Phone verification is required");
+      toast.error(t('auth.phoneVerificationRequired'));
       return;
     }
 
@@ -328,7 +330,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
           profilePicUrl = await uploadToCloudinary(profileImage);
         } catch (error) {
           console.error("Image upload failed:", error);
-          toast.error("Failed to upload image. Please try again.");
+          toast.error(t('auth.imageUploadFailed'));
           return;
         }
       }
@@ -338,7 +340,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
       localStorage.setItem("token", res.token);
       localStorage.setItem("isLoggedIn", "true");
       authEvents.dispatch();
-      toast.success("Signup successful 🎉");
+      toast.success(t('auth.signupSuccess'));
 
       setTimeout(() => {
         onClose?.();
@@ -350,7 +352,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
       }, 800);
     } catch (err: unknown) {
       const error = err as AxiosError<{ message?: string }>;
-      const errorMsg = error.response?.data?.message || "Signup failed";
+      const errorMsg = error.response?.data?.message || t('auth.signupFailed');
       toast.error(errorMsg);
     }
   };
@@ -364,7 +366,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
       localStorage.setItem("token", res.token);
       localStorage.setItem("isLoggedIn", "true");
       authEvents.dispatch();
-      toast.success("Login successful ✅");
+      toast.success(t('auth.loginSuccess'));
       setTimeout(() => {
         onClose?.();
         if (onAuthSuccess) {
@@ -375,7 +377,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
       }, 800);
     } catch (err: unknown) {
       const error = err as AxiosError<{ message?: string }>;
-      const errorMsg = error.response?.data?.message || "Login failed";
+      const errorMsg = error.response?.data?.message || t('auth.loginFailed');
       toast.error(errorMsg);
     }
   };
@@ -385,7 +387,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
 
   const handleForgotPasswordSubmit = async () => {
     if (!forgotValue) {
-      toast.error(`Please enter your ${forgotMethod}`);
+      toast.error(t('auth.enterYourMethod', { method: forgotMethod === "email" ? t('auth.methodEmail') : t('auth.methodWhatsapp') }));
       return;
     }
 
@@ -394,14 +396,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
       const res = await forgotPassword(data);
 
       if (res.link) {
-        toast.success(`Password reset link (Mock): ${res.link}`);
+        toast.success(t('auth.resetLinkMock', { link: res.link }));
       } else {
         toast.success(res.message);
       }
       setIsForgotPassword(false); // Return to login
     } catch (err: unknown) {
       const error = err as AxiosError<{ message?: string }>;
-      const errorMsg = error.response?.data?.message || "Failed to process request";
+      const errorMsg = error.response?.data?.message || t('auth.failedProcessRequest');
       toast.error(errorMsg);
     }
   };
@@ -413,7 +415,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
     onVerify: () => void
   ) => (
     <Box sx={{ mt: 2 }}>
-      <Typography variant="body2" mb={1} textAlign="center">Enter OTP</Typography>
+      <Typography variant="body2" mb={1} textAlign="center">{t('auth.enterOtp')}</Typography>
       <Box sx={{ display: "flex", gap: 1, justifyContent: "center", mb: 2 }}>
         {Array.from({ length: 6 }).map((_, index) => (
           <TextField
@@ -447,7 +449,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
         ))}
       </Box>
       <Button fullWidth variant="outlined" onClick={onVerify} size="small" sx={{ mb: 1 }}>
-        Verify
+        {t('auth.verify')}
       </Button>
     </Box>
   );
@@ -497,21 +499,21 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
           textAlign="left"
           sx={{ color: "#111827" }}
         >
-          {isForgotPassword ? "Reset Password" : (isSignup ? `Signup Step ${step}` : "Login to Continue")}
+          {isForgotPassword ? t('auth.resetPasswordTitle') : (isSignup ? t('auth.signupStep', { step }) : t('auth.loginTitle'))}
         </Typography>
 
         {isForgotPassword ? (
           <Box>
             <FormControl component="fieldset" margin="normal">
               <RadioGroup row value={forgotMethod} onChange={(e) => setForgotMethod(e.target.value as "email" | "whatsapp")}>
-                <FormControlLabel value="email" control={<Radio />} label="Email" />
-                <FormControlLabel value="whatsapp" control={<Radio />} label="WhatsApp" />
+                <FormControlLabel value="email" control={<Radio />} label={t('auth.methodEmail')} />
+                <FormControlLabel value="whatsapp" control={<Radio />} label={t('auth.methodWhatsapp')} />
               </RadioGroup>
             </FormControl>
 
             <TextField
               fullWidth
-              label={forgotMethod === "email" ? "Enter Email" : "Enter WhatsApp Number"}
+              label={forgotMethod === "email" ? t('auth.enterEmailLabel') : t('auth.enterWhatsappLabel')}
               value={forgotValue}
               onChange={(e) => setForgotValue(e.target.value)}
               margin="normal"
@@ -529,10 +531,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                 borderRadius: 1.5,
               }}
             >
-              Send Reset Link
+              {t('auth.sendResetLink')}
             </Button>
             <Button fullWidth onClick={() => setIsForgotPassword(false)} sx={{ color: "#666" }}>
-              Back to Login
+              {t('auth.backToLogin')}
             </Button>
           </Box>
         ) : (
@@ -576,12 +578,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                     </label>
                   </Box>
                   <Typography variant="caption" display="block" textAlign="center" color="text.secondary" sx={{ mt: -1, mb: 1 }}>
-                    select image less than 5mb
+                    {t('auth.imageSizeHint')}
                   </Typography>
 
                   <TextField
                     fullWidth
-                    label="Name*"
+                    label={t('auth.nameLabel')}
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
@@ -590,7 +592,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                   />
                   <TextField
                     fullWidth
-                    label="Phone No*"
+                    label={t('auth.phoneLabel')}
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
@@ -601,7 +603,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                   />
                   <TextField
                     fullWidth
-                    label="Email*"
+                    label={t('auth.emailLabel')}
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
@@ -613,7 +615,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
 
                   <TextField
                     fullWidth
-                    label="Password*"
+                    label={t('auth.passwordLabel')}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
@@ -635,7 +637,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                   {formData.password && !isPasswordStrong && (
                     <Box sx={{ mt: 1, mb: 1, pl: 1 }}>
                       <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.5 }}>
-                        Password must contain:
+                        {t('auth.passwordMustContain')}
                       </Typography>
                       {passwordCriteria.map((criterion, index) => (
                         <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -657,7 +659,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
 
                   <TextField
                     fullWidth
-                    label="Confirm Password*"
+                    label={t('auth.confirmPasswordLabel')}
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
@@ -688,7 +690,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                       borderRadius: 1.5,
                     }}
                   >
-                    Next
+                    {t('auth.next')}
                   </Button>
                 </>
               ) : (
@@ -697,7 +699,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                   <Box sx={{ mb: 2 }}>
                     <TextField
                       fullWidth
-                      label="Phone Verification (OTP Sent to Your Number)"
+                      label={t('auth.phoneVerificationLabel')}
                       value={formData.phone}
                       disabled
                       InputProps={{
@@ -719,8 +721,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                         sx={{ mt: 1 }}
                       >
                         {phoneCountdown > 0
-                          ? `Resend in ${phoneCountdown}s`
-                          : (phoneOtpSent ? "Resend OTP" : "Verify Phone")
+                          ? t('auth.resendIn', { seconds: phoneCountdown })
+                          : (phoneOtpSent ? t('auth.resendOtp') : t('auth.verifyPhone'))
                         }
                       </Button>
                     )}
@@ -731,7 +733,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                   <Box sx={{ mb: 2 }}>
                     <TextField
                       fullWidth
-                      label="Email (Optional Verification)"
+                      label={t('auth.emailVerificationLabel')}
                       value={formData.email}
                       disabled
                       InputProps={{
@@ -753,8 +755,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                         sx={{ mt: 1 }}
                       >
                         {emailCountdown > 0
-                          ? `Resend in ${emailCountdown}s`
-                          : (emailOtpSent ? "Resend OTP" : "Verify Email")
+                          ? t('auth.resendIn', { seconds: emailCountdown })
+                          : (emailOtpSent ? t('auth.resendOtp') : t('auth.verifyEmail'))
                         }
                       </Button>
                     )}
@@ -775,12 +777,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                         borderRadius: 1.5,
                       }}
                     >
-                      Start Barakah
+                      {t('auth.startBarakah')}
                     </Button>
                   )}
 
                   <Button fullWidth onClick={() => setStep(1)} sx={{ color: "#666" }}>
-                    Back
+                    {t('auth.back')}
                   </Button>
                 </>
               )
@@ -789,7 +791,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                 {/* Login Flow */}
                 <TextField
                   fullWidth
-                  label="Email*"
+                  label={t('auth.emailLabel')}
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -798,7 +800,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                 />
                 <TextField
                   fullWidth
-                  label="Password*"
+                  label={t('auth.passwordLabel')}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -827,7 +829,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                     borderRadius: 1.5,
                   }}
                 >
-                  Log in
+                  {t('auth.login')}
                 </Button>
               </>
             )}
@@ -840,7 +842,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
                   onClick={() => setIsForgotPassword(true)}
                   sx={{ textDecoration: 'none', color: '#059669', fontWeight: 500 }}
                 >
-                  Forgot Password?
+                  {t('auth.forgotPassword')}
                 </Link>
               </Box>
             )}
@@ -851,14 +853,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onClose, onAuthSuccess }) => {
               color="text.secondary"
               sx={{ mt: 1 }}
             >
-              {isSignup ? "Already have an account? " : "Don't have an account? "}
+              {isSignup ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}
               <Link
                 href="#"
                 underline="hover"
                 sx={{ color: "#059669" }}
                 onClick={handleToggle}
               >
-                {isSignup ? "Log in" : "Sign up"}
+                {isSignup ? t('auth.login') : t('auth.signupLink')}
               </Link>
             </Typography>
           </Box>

@@ -4,6 +4,7 @@ import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Import social media icons (adjust paths as needed - using absolute imports likely works or relative from here)
 import Facebook from "../../assets/facebook_logo1.png";
@@ -212,6 +213,7 @@ const FooterLinksSection: React.FC<FooterLinksSectionProps> = ({ title, children
 };
 
 const Footer: React.FC = () => {
+    const { t } = useTranslation();
     const categories = [
         'Prayers Mats & Caps',
         'Accessories',
@@ -236,11 +238,11 @@ const Footer: React.FC = () => {
                         BARAKA
                     </Typography>
                     <Typography variant="body1" sx={{ lineHeight: 1.8, opacity: 0.8, maxWidth: '300px', margin: { xs: '0 auto', md: 0 } }}>
-                        Your trusted source for authentic Islamic products and prayer services, sourced directly from sacred sites.
+                        {t('footer.tagline')}
                     </Typography>
                 </FooterColumn>
 
-                <FooterLinksSection title="Collections">
+                <FooterLinksSection title={t('footer.collectionsTitle')}>
                     {categories.map((cat) => (
                         <FooterLink
                             key={cat}
@@ -252,30 +254,30 @@ const Footer: React.FC = () => {
                     ))}
                 </FooterLinksSection>
 
-                <FooterLinksSection title="Support">
+                <FooterLinksSection title={t('footer.supportTitle')}>
                     {/* <FooterLink component={Link} to="/about-us">About Us</FooterLink> */}
-                    <FooterLink component={Link} to="/faq">Help Center</FooterLink>
-                    <FooterLink component={Link} to="/refund-policy">Refund and exchange policy </FooterLink>
-                    <FooterLink component={Link} to="/terms-conditions">Terms and conditions</FooterLink>
-                    <FooterLink component={Link} to="/payment-privacy-policy">Payment and privacy policy</FooterLink>
+                    <FooterLink component={Link} to="/faq">{t('footer.helpCenter')}</FooterLink>
+                    <FooterLink component={Link} to="/refund-policy">{t('footer.refundPolicy')}</FooterLink>
+                    <FooterLink component={Link} to="/terms-conditions">{t('footer.termsConditions')}</FooterLink>
+                    <FooterLink component={Link} to="/payment-privacy-policy">{t('footer.paymentPrivacyPolicy')}</FooterLink>
                 </FooterLinksSection>
 
-                <FooterLinksSection title="Contact Us">
+                <FooterLinksSection title={t('footer.contactTitle')}>
                     <Typography variant="body2" sx={{ color: "#e0e0e0", mb: 1.5, fontSize: "0.95rem" }}>
-                        <strong>Email:</strong> info@barakah.com
+                        <strong>{t('footer.emailLabel')}</strong> info@barakah.com
                     </Typography>
                     <Typography variant="body2" sx={{ color: "#e0e0e0", mb: 1.5, fontSize: "0.95rem" }}>
-                        <strong>Phone:</strong> +92 300 1234567
+                        <strong>{t('footer.phoneLabel')}</strong> +92 300 1234567
                     </Typography>
                     <Typography variant="body2" sx={{ color: "#e0e0e0", mb: 1.5, fontSize: "0.95rem", lineHeight: 1.6 }}>
-                        <strong>Address:</strong> 320 K1, Wapda Town, Lahore, Pakistan
+                        <strong>{t('footer.addressLabel')}</strong> 320 K1, Wapda Town, Lahore, Pakistan
                     </Typography>
                 </FooterLinksSection>
 
             </FooterSection>
             <FooterBottom>
                 <CopyrightText>
-                    © {new Date().getFullYear()} Baraka. All rights reserved.
+                    {t('footer.copyright', { year: new Date().getFullYear() })}
                 </CopyrightText>
                 <SocialIcons>
                     <SocialIcon

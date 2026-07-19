@@ -16,6 +16,7 @@ import {
     CircularProgress
 } from '@mui/material';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { getProductsByCategory } from '../../services/islamicProductService';
 import { useCart } from '../../context/CartContext';
 
@@ -31,6 +32,7 @@ interface Product {
 }
 
 const CategoryProductsPage: React.FC = () => {
+    const { t } = useTranslation();
     const { category } = useParams<{ category: string }>();
     const navigate = useNavigate();
     const [products, setProducts] = useState<Product[]>([]);
@@ -47,7 +49,7 @@ const CategoryProductsPage: React.FC = () => {
                 }
             } catch (err) {
                 console.error("Error fetching products:", err);
-                setError("Failed to load products. Please try again later.");
+                setError(t('category.loadError'));
             } finally {
                 setLoading(false);
             }
@@ -60,7 +62,7 @@ const CategoryProductsPage: React.FC = () => {
 
     const handleAddToCart = (product: Product) => {
         if (product.stock <= 0) {
-            toast.warning(`${product.name} is out of stock!`);
+            toast.warning(t('category.outOfStockToast', { name: product.name }));
             return;
         }
         addToCart({
@@ -71,7 +73,7 @@ const CategoryProductsPage: React.FC = () => {
             price: product.salePrice,
             quantity: 1
         });
-        toast.success(`${product.name} added to cart!`);
+        toast.success(t('category.addedToCartToast', { name: product.name }));
     };
 
     if (loading) {
@@ -121,7 +123,7 @@ const CategoryProductsPage: React.FC = () => {
                                     {/* Sale Badge */}
                                     {product.salePrice < product.actualPrice && (
                                         <Chip
-                                            label="SALE"
+                                            label={t('common.sale')}
                                             color="error"
                                             size="small"
                                             sx={{
@@ -175,7 +177,7 @@ const CategoryProductsPage: React.FC = () => {
                                                         }
                                                     }}
                                                 >
-                                                    View
+                                                    {t('common.view')}
                                                 </Button>
                                             </Grid>
                                             <Grid size={{ xs: 6 }}>
@@ -188,7 +190,7 @@ const CategoryProductsPage: React.FC = () => {
                                                         '&:hover': { bgcolor: '#0d704e' }
                                                     }}
                                                 >
-                                                    Add to Cart
+                                                    {t('common.addToCart')}
                                                 </Button>
                                             </Grid>
                                         </Grid>

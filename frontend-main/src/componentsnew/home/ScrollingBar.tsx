@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 
 const TypingBar: React.FC = () => {
     const navigate = useNavigate();
-    const fullText = "Free Delivery Order Above 1999 Rupee All Over Pakistan! Enjoy Up To 5% Off on Bank Transfer Payments — ";
+    const { t } = useTranslation();
+    const fullText = t('promo.announcement');
     const [displayedText, setDisplayedText] = useState("");
     const [showLink, setShowLink] = useState(false);
     const [isWaiting, setIsWaiting] = useState(false);
@@ -76,7 +78,7 @@ const TypingBar: React.FC = () => {
                             '&:hover': { color: '#e0e0e0' }
                         }}
                     >
-                        Shop Now
+                        {t('common.shopNow')}
                     </Box>
                 )}
                 {/* Blinking Cursor */}

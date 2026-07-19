@@ -16,6 +16,7 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import { useNavigate } from "react-router-dom";
 import { fetchScholars } from "../../services/scholarService";
 import { Scholar } from "../../types/Scholars";
+import { useTranslation } from "react-i18next";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: "12px",
@@ -107,6 +108,7 @@ const BookButton = styled(Button)(({ theme }) => ({
 }));
 
 const FindScholar: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const itemsPerPage = 6;
@@ -134,7 +136,7 @@ const FindScholar: React.FC = () => {
   if (loading) {
     return (
       <Typography textAlign="center" mt={5}>
-        Loading scholars...
+        {t("scholars.loading")}
       </Typography>
     );
   }
@@ -216,7 +218,7 @@ const FindScholar: React.FC = () => {
           },
         }}
       >
-        Find Your Scholar
+        {t("scholars.findYourScholar")}
       </Typography>
 
       <Box
@@ -238,7 +240,7 @@ const FindScholar: React.FC = () => {
             fontSize: { xs: "0.875rem", sm: "1rem" }
           }}
         >
-          Clients rate our Scholars
+          {t("scholars.clientsRate")}
         </Typography>
         <Rating value={4.8} precision={0.1} readOnly size="small" />
         <Typography
@@ -342,7 +344,7 @@ const FindScholar: React.FC = () => {
                 }}
               >
                 <WorkOutlineIcon sx={{ fontSize: { xs: 16, sm: 18 }, mr: 0.5 }} />
-                {scholar.blessings} blessings done
+                {t("scholars.blessingsDone", { count: scholar.blessings })}
               </Box>
               <Box sx={{
                 display: "flex",
@@ -357,7 +359,7 @@ const FindScholar: React.FC = () => {
                   }}
                   sx={{ flex: 1 }}
                 >
-                  View Profile
+                  {t("scholars.viewProfile")}
                 </ProfileButton>
 
                 <BookButton
@@ -366,7 +368,7 @@ const FindScholar: React.FC = () => {
                     navigate("/bookyourspirtualservice", { state: { bookScholar: scholar } });
                   }}
                 >
-                  Book Now
+                  {t("scholars.bookNow")}
                 </BookButton>
               </Box>
             </StyledCard>

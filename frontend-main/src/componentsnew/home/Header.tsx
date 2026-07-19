@@ -26,6 +26,8 @@ import {
     Popover
 } from "@mui/material";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "../../Components/LanguageToggle";
 // import { useTheme } from "@mui/material/styles"; // Unused
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -65,6 +67,7 @@ const categories = [
 ];
 
 const Header: React.FC = () => {
+    const { t } = useTranslation();
     // const theme = useTheme(); // Unused
     // const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm")); // Unused variable
     const [unreadCompletedCount, setUnreadCompletedCount] = useState<number>(0);
@@ -93,15 +96,15 @@ const Header: React.FC = () => {
     // const trigger = useScrollTrigger({ disableHysteresis: true, threshold: 0 }); // Unused variable for sticky header
 
     const navItems = [
-        { label: "Home", type: "link", value: "/" },
-        { label: "Prayers Mats", type: "category", value: "Prayers Mats & Caps" },
-        { label: "Accessories", type: "category", value: "Accessories" },
-        { label: "Islamic Books", type: "category", value: "Islamic books & Literature" },
-        { label: "Tasbih", type: "category", value: "Tasbih" },
-        { label: "Categories", type: "mega-menu" },
-        { label: "Shop", type: "link", value: "/shop-islamic" },
+        { label: "Home", labelKey: "nav.home", type: "link", value: "/" },
+        { label: "Prayers Mats", labelKey: "nav.prayerMats", type: "category", value: "Prayers Mats & Caps" },
+        { label: "Accessories", labelKey: "nav.accessories", type: "category", value: "Accessories" },
+        { label: "Islamic Books", labelKey: "nav.islamicBooks", type: "category", value: "Islamic books & Literature" },
+        { label: "Tasbih", labelKey: "nav.tasbih", type: "category", value: "Tasbih" },
+        { label: "Categories", labelKey: "nav.categories", type: "mega-menu" },
+        { label: "Shop", labelKey: "nav.shop", type: "link", value: "/shop-islamic" },
         // { label: "About", type: "link", value: "/about-us" },
-        { label: "FAQ", type: "link", value: "/faq" },
+        { label: "FAQ", labelKey: "nav.faq", type: "link", value: "/faq" },
     ];
 
     useEffect(() => {
@@ -340,7 +343,7 @@ const Header: React.FC = () => {
                                             },
                                         }}
                                     >
-                                        {item.label}
+                                        {t(item.labelKey)}
                                     </Typography>
 
                                     {/* Mega Menu Dropdown */}
@@ -402,7 +405,7 @@ const Header: React.FC = () => {
                                                                 alt={cat.title}
                                                             />
                                                             <Typography variant="body2" fontWeight="bold">
-                                                                {cat.title}
+                                                                {t(`categories.${cat.title}`)}
                                                             </Typography>
                                                         </Card>
                                                     </Grid>
@@ -425,8 +428,9 @@ const Header: React.FC = () => {
                             whiteSpace: "nowrap",
                         }}
                     >
+                        <LanguageToggle />
                         {/* Cart Icon */}
-                        <Tooltip title="Shopping Cart" arrow>
+                        <Tooltip title={t("common.shoppingCart")} arrow>
                             <IconButton
                                 onClick={() => {
                                     navigate("/cart1");
@@ -493,13 +497,14 @@ const Header: React.FC = () => {
                                     },
                                 }}
                             >
-                                Sign In
+                                {t("common.signIn")}
                             </Button>
                         )}
                     </Box>
 
                     {/* Mobile Menu Icon & Profile */}
                     <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center", gap: 1 }}>
+                        <LanguageToggle compact />
                         {/* Mobile Cart Icon */}
                         <IconButton
                             onClick={() => {
@@ -563,7 +568,7 @@ const Header: React.FC = () => {
                     Settings
                 </MenuItem>
                 <Divider /> */}
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleLogout}>{t("common.logout")}</MenuItem>
             </Menu>
 
             <Drawer
@@ -606,7 +611,7 @@ const Header: React.FC = () => {
                                         }}
                                     >
                                         <ListItemText
-                                            primary={item.label}
+                                            primary={t(item.labelKey)}
                                             primaryTypographyProps={{ sx: { fontWeight: 500 } }}
                                         />
                                     </ListItemButton>
@@ -620,7 +625,7 @@ const Header: React.FC = () => {
                                                 navigate(`/islamic-merchandise/${encodeURIComponent(cat.title)}`);
                                                 setDrawerOpen(false);
                                             }}>
-                                                <ListItemText primary={cat.title} primaryTypographyProps={{ variant: 'body2' }} />
+                                                <ListItemText primary={t(`categories.${cat.title}`)} primaryTypographyProps={{ variant: 'body2' }} />
                                             </ListItemButton>
                                         ))}
                                     </Box>
@@ -643,7 +648,7 @@ const Header: React.FC = () => {
                                 width: "100%",
                             }}
                         >
-                            Sign In
+                            {t("common.signIn")}
                         </Button>
                     )}
                 </Box>

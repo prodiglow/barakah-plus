@@ -11,6 +11,7 @@ import {
     CardActions
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 // Placeholder images - using colored placeholders for now or generic online ones if possible, 
 // but stick to colors/text for safety or simple placeholders.
@@ -56,6 +57,7 @@ const categories = [
 
 const IslamicMerchandisePage: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     return (
         <Box sx={{ pb: 8, bgcolor: '#f9f9f9', minHeight: '100vh', pt: { xs: 10, md: 0 } }}>
@@ -83,10 +85,10 @@ const IslamicMerchandisePage: React.FC = () => {
             >
                 <Container sx={{ position: 'relative', zIndex: 1 }}>
                     <Typography variant="h3" component="h1" fontWeight="bold" gutterBottom>
-                        Islamic Merchandise
+                        {t('shop.heroTitle')}
                     </Typography>
                     <Typography variant="h6" component="p">
-                        Your Home for Islamic Essentials More Than Products, It’s Baraka.
+                        {t('shop.heroSubtitle')}
                     </Typography>
                 </Container>
             </Box>
@@ -107,7 +109,7 @@ const IslamicMerchandisePage: React.FC = () => {
                         width: 'fit-content'
                     }}
                 >
-                    Main Categories
+                    {t('shop.mainCategories')}
                 </Typography>
                 <Grid container spacing={3} sx={{ mb: 6 }}>
                     {categories.map((cat, index) => (
@@ -147,7 +149,7 @@ const IslamicMerchandisePage: React.FC = () => {
                                             fontWeight: 'bold'
                                         }}
                                     >
-                                        {cat.buttonText}
+                                        {t('common.view')}
                                     </Button>
                                 </CardActions>
                             </Card>
