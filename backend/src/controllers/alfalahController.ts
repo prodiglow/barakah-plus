@@ -253,7 +253,7 @@ export async function getOrderStatus(req: Request, res: Response): Promise<void>
       return;
     }
 
-    const ipn = await inquireOrderStatus(orderRef);
+    const ipn = await inquireOrderStatus(String(orderRef));
     const outcome = interpretOrderStatus(ipn);
     // Return a minimal, non-PII subset (omit AccountNumber / MobileNumber).
     res.json({

@@ -119,7 +119,7 @@ export const getRemindersByOrderId = async (req: Request, res: Response) => {
   try {
     const { orderID } = req.params;
 
-    const objectId = new mongoose.Types.ObjectId(orderID);
+    const objectId = new mongoose.Types.ObjectId(String(orderID));
 
     const reminders = await Reminder.find({ OrderID: objectId })
       .populate("OrderID")

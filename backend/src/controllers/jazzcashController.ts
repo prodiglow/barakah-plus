@@ -202,7 +202,7 @@ export async function getTransactionStatus(req: Request, res: Response): Promise
       return;
     }
 
-    const result = await inquireTransactionStatus(txnRefNo);
+    const result = await inquireTransactionStatus(String(txnRefNo));
 
     if (result.success) {
       res.json(result);

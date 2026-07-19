@@ -46,7 +46,7 @@ export const getUserCards = async (req: Request, res: Response) => {
     const { userID } = req.params;
 
     // ✅ Convert string to ObjectId before querying
-    const objectId = new mongoose.Types.ObjectId(userID);
+    const objectId = new mongoose.Types.ObjectId(String(userID));
 
     const cards = await UserCards.find({ userID: objectId }).sort({ createdAt: -1 });
 

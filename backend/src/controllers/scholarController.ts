@@ -35,7 +35,7 @@ export const getAllScholars = async (req:Request, res:Response) => {
 export const getScholarById = async (req: Request, res: Response) => {
   try {
     const scholar = await Scholar.findOne({
-      scholarID: parseInt(req.params.scholarID),
+      scholarID: parseInt(String(req.params.scholarID)),
     })
       .populate("scholarEducation")
       .populate("scholarSpecialization")

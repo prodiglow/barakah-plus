@@ -6,7 +6,7 @@ export const getProductsByCategory = async (req: Request, res: Response) => {
     const { categoryName } = req.params;
     
     // Decode category name to handle URL encoding (e.g., "Prayers%20Mats%20&%20Caps")
-    const decodedCategory = decodeURIComponent(categoryName);
+    const decodedCategory = decodeURIComponent(String(categoryName));
 
     // Use regex for flexible matching (case-insensitive) to allow "Prayer Mat" to find products named "...Prayer Mat..."
     const searchRegex = new RegExp(decodedCategory, 'i');
