@@ -463,13 +463,11 @@ const OrderDetails: React.FC = () => {
         Status: "Pending Admin Review", // ✅ Reset status to Pending Admin Review so it shows in Admin Dashboard badges
       };
 
-      if (order.OrderAmt === 0 || order.OrderAmt === null || order.OrderAmt === undefined) {
-        updateData.ScholarID = ["Sunni", "Deobandi", "Barelvi", "Ahl-e-Hadith"].includes(formData.Sect)
-          ? "68f0a62920f6d6ea28513c37"
-          : formData.Sect === "Shia"
-            ? "68f096b14829b2ccef2c6e3e"
-            : order.ScholarID;
-      }
+      // ScholarID is intentionally left out of updateData: it used to be
+      // recomputed here with two hardcoded scholar IDs that no longer exist,
+      // silently overwriting a correctly-assigned scholar with a dangling
+      // reference on every edit. Scholar assignment is decided once, by the
+      // backend, at order creation — editing other fields shouldn't touch it.
 
       // Update the order
       const response = await updateOrder(id, updateData);
