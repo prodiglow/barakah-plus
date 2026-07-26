@@ -2,12 +2,7 @@ import { Scholar } from "../models/Scholar";
 import { ScholarServices } from "../models/scholarServices";
 import { Gender, Sect } from "../constants/scholarMatching";
 
-// Pre-existing, manually-created fallback scholar that is already live in the
-// production database (Atlas `barakahDB`). This is the last-resort match used
-// when no scholar satisfies any tier of the matching chain below.
-export const FALLBACK_SCHOLAR_ID = "68f096b14829b2ccef2c6e3e";
-
-export type MatchQuality = "exact" | "same_gender" | "any" | "fallback";
+export type MatchQuality = "exact" | "same_gender" | "any" | "any_scholar";
 
 export interface ScholarAssignmentResult {
   scholarId: string;
@@ -21,16 +16,22 @@ export interface ScholarAssignmentResult {
  *   1. exact:       gender + sect + offers the relevant service
  *   2. same_gender:  gender only + offers the relevant service
  *   3. any:         any scholar offering the relevant service
- *   4. fallback:    the pre-existing hardcoded fallback scholar
+ *   4. any_scholar: any scholar in the system at all, service unfiltered
  *
  * For the Free Personal Dua path (orderTitle !== "Quran Khawani"), the
- * relevant service is "Dua" and is used as a filter at every tier. For the
+ * relevant service is "Dua" and is used as a filter at tiers 1-3. For the
  * Quran Khawani path, no service filter is applied at any tier (preserving
  * today's scope for that adjacent flow — no Quran Khawani service entry
  * currently exists).
  *
- * Only throws if the Scholar collection is completely empty (which should
- * never happen given the fallback constant is a real, live document).
+ * Deliberately has no hardcoded fallback scholar ID: a specific scholar
+ * document can be deleted or replaced at any time, and a hardcoded ID that
+ * later stops existing produces a silently-dangling reference — the order
+ * appears to have a real ScholarID but populates as null everywhere it's
+ * displayed. Tier 4 queries the database for any real scholar instead, so
+ * this can never point at a scholar that doesn't actually exist.
+ *
+ * Only throws if the Scholar collection is completely empty.
  */
 export async function assignScholarForFreeService(
   gender: string,
@@ -81,6 +82,14 @@ export async function assignScholarForFreeService(
     return { scholarId: anyMatch._id.toString(), matchQuality: "any" };
   }
 
-  // 4. Last resort: pre-existing hardcoded fallback scholar
-  return { scholarId: FALLBACK_SCHOLAR_ID, matchQuality: "fallback" };
+  // 4. Last resort: any scholar in the system at all, verified to actually
+  // exist right now rather than trusting a hardcoded ID that might not.
+  const anyScholarAtAll = await Scholar.findOne({});
+  if (anyScholarAtAll) {
+    return { scholarId: anyScholarAtAll._id.toString(), matchQuality: "any_scholar" };
+  }
+
+  throw new Error(
+    "No scholars exist in the database — cannot assign a scholar for a free-service order."
+  );
 }
