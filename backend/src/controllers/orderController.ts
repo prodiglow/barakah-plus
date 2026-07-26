@@ -73,7 +73,7 @@ export const createOrder = async (req: Request, res: Response) => {
       );
       assignedScholarId = scholarId;
 
-      if (matchQuality === "any" || matchQuality === "fallback") {
+      if (matchQuality === "any" || matchQuality === "any_scholar") {
         console.warn(
           `⚠️ Scholar auto-assignment fell back to "${matchQuality}" match for gender=${gender}, Sect=${Sect}, OrderTitle=${OrderTitle}. Assigned scholarId=${assignedScholarId}. Admin follow-up recommended.`
         );
