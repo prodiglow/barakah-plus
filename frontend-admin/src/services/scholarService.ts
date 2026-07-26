@@ -2,7 +2,13 @@ import api from "./api";
 import { Scholar } from "../types/Scholars";
 
 const API_URL = "/scholars";
-const UPLOAD_API_URL = ""; 
+const UPLOAD_API_URL = "";
+
+/** Scholar gender — must match backend enum exactly (lowercase) */
+export type ScholarGender = 'male' | 'female';
+
+/** Scholar sect — must match backend enum exactly */
+export type ScholarSect = 'Shia' | 'Deobandi' | 'Barelvi' | 'Ahl-e-Hadith';
 
 /** Create Scholar Request */
 export interface CreateScholarRequest {
@@ -16,6 +22,8 @@ export interface CreateScholarRequest {
   phone_number: string;
   rating: number;
   blessings: number;
+  gender: ScholarGender;
+  sect: ScholarSect;
 }
 
 export const fetchScholars = async (): Promise<Scholar[]> => {

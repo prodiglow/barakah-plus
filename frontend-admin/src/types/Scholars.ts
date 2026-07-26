@@ -39,9 +39,11 @@ export interface Scholar {
   ProfileImg: string;
   reviews: ScholarReview[];
   fee: number;         // 💵 New field
-  blessings: number;  
+  blessings: number;
   scholarServices:ScholarServices[]; // 🙏 New field
   phone_number: string;
+  gender: 'male' | 'female';
+  sect: 'Shia' | 'Deobandi' | 'Barelvi' | 'Ahl-e-Hadith';
   createdAt?: string;
   updatedAt?: string;
 }
