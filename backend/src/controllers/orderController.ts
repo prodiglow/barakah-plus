@@ -7,6 +7,7 @@ import User from "../models/User";
 import { Scholar } from "../models/Scholar";
 import { sendEmail } from "../services/emailService";
 import { sendWhatsAppMessage } from '../services/twilioService';
+import { assignScholarForFreeService } from "../services/scholarAssignmentService";
 
 // 📌 Create a new order
 export const createOrder = async (req: Request, res: Response) => {
@@ -61,10 +62,17 @@ export const createOrder = async (req: Request, res: Response) => {
     // 🧠 Auto-assign scholar for Free Personal Dua (OrderAmt === 0) OR Quran Khawani
     let assignedScholarId = ScholarID;
     if (OrderAmt === 0 || OrderTitle === "Quran Khawani") {
-      if (Sect === "Sunni") {
-        assignedScholarId = "68f0a62920f6d6ea28513c37";
-      } else {
-        assignedScholarId = "68f096b14829b2ccef2c6e3e";
+      const { scholarId, matchQuality } = await assignScholarForFreeService(
+        gender,
+        Sect,
+        OrderTitle
+      );
+      assignedScholarId = scholarId;
+
+      if (matchQuality === "any" || matchQuality === "fallback") {
+        console.warn(
+          `⚠️ Scholar auto-assignment fell back to "${matchQuality}" match for gender=${gender}, Sect=${Sect}, OrderTitle=${OrderTitle}. Assigned scholarId=${assignedScholarId}. Admin follow-up recommended.`
+        );
       }
     }
 

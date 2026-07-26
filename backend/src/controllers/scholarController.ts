@@ -73,6 +73,8 @@ export const createScholar = async (req: Request, res: Response) => {
       blessings,  
       scholarServices,   // 🙏 added
       phone_number,
+      gender,
+      sect,
     } = req.body;
 
     // Ensure we have arrays
@@ -131,6 +133,8 @@ export const createScholar = async (req: Request, res: Response) => {
       blessings: blessings || 0, // default if missing
       scholarServices: servicesIds,
       phone_number,
+      gender,
+      sect,
     });
 
     res.status(201).json({
@@ -160,6 +164,8 @@ export const updateScholar = async (req: Request, res: Response) => {
       blessings,
       scholarServices,
       phone_number,
+      gender,
+      sect,
     } = req.body;
 
     // 🔍 Find existing scholar
@@ -178,6 +184,8 @@ export const updateScholar = async (req: Request, res: Response) => {
     if (fee !== undefined) updateData.fee = fee;
     if (blessings !== undefined) updateData.blessings = blessings;
     if (phone_number !== undefined) updateData.phone_number = phone_number;
+    if (gender !== undefined) updateData.gender = gender;
+    if (sect !== undefined) updateData.sect = sect;
 
     // ---------------------------
     //   EDUCATION ARRAY UPDATE
