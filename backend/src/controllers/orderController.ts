@@ -60,8 +60,12 @@ export const createOrder = async (req: Request, res: Response) => {
     }
 
     // 🧠 Auto-assign scholar for Free Personal Dua (OrderAmt === 0) OR Quran Khawani
+    // Number(...) guards against OrderAmt arriving as the string "0" — a strict
+    // `OrderAmt === 0` check silently skips assignment in that case, while the
+    // stored order still *displays* OrderAmt: 0 after Mongoose casts it on save,
+    // which makes the bug invisible from the database alone.
     let assignedScholarId = ScholarID;
-    if (OrderAmt === 0 || OrderTitle === "Quran Khawani") {
+    if (Number(OrderAmt) === 0 || OrderTitle === "Quran Khawani") {
       const { scholarId, matchQuality } = await assignScholarForFreeService(
         gender,
         Sect,

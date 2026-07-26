@@ -574,11 +574,11 @@ const BookYourSpirtualForm: React.FC<BookYourSpirtualFormProps> = ({
       const orderData: any = {
         OrderTitle: activeTab === 5 ? "Quran O Hadith" : "Personal Dua",
         UserID: localStorage.getItem("userId"),
-        ScholarID: ["Sunni", "Deobandi", "Barelvi", "Ahl-e-Hadith"].includes(formData.sect)
-          ? "68f0a62920f6d6ea28513c37"
-          : formData.sect === "Shia"
-            ? "68f096b14829b2ccef2c6e3e"
-            : null,
+        // No ScholarID here — the backend owns gender+sect scholar matching for
+        // free-flow orders (OrderAmt === 0) and always assigns a real scholar.
+        // This used to compute one client-side using two hardcoded scholar IDs
+        // and a sect check that could fall through to null; that duplicated,
+        // stale logic is removed rather than kept in sync with the backend.
         OrderAmt: 0,
         PaymentStatus: "Paid",
         Status: "Pending Admin Review",
