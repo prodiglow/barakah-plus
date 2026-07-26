@@ -97,6 +97,7 @@ const Header: React.FC = () => {
 
     const navItems = [
         { label: "Home", labelKey: "nav.home", type: "link", value: "/" },
+        { label: "Spiritual Services", labelKey: "nav.spiritualServices", type: "link", value: "/bookyourspirtualservice" },
         { label: "Prayers Mats", labelKey: "nav.prayerMats", type: "category", value: "Prayers Mats & Caps" },
         { label: "Accessories", labelKey: "nav.accessories", type: "category", value: "Accessories" },
         { label: "Islamic Books", labelKey: "nav.islamicBooks", type: "category", value: "Islamic books & Literature" },

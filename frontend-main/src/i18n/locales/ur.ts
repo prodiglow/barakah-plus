@@ -22,6 +22,7 @@ const ur: TranslationBundle = {
   },
   "nav": {
     "home": "ہوم",
+    "spiritualServices": "روحانی خدمات",
     "prayerMats": "جائے نماز",
     "accessories": "لوازمات",
     "islamicBooks": "اسلامی کتب",
@@ -62,6 +63,7 @@ const ur: TranslationBundle = {
     "collectionsTitle": "مجموعے",
     "supportTitle": "معاونت",
     "contactTitle": "ہم سے رابطہ کریں",
+    "spiritualServices": "روحانی خدمات",
     "helpCenter": "امدادی مرکز",
     "refundPolicy": "رقم کی واپسی اور تبادلے کی پالیسی",
     "termsConditions": "شرائط و ضوابط",
