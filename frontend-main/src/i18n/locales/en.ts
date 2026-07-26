@@ -21,6 +21,7 @@ const en = {
   },
   "nav": {
     "home": "Home",
+    "spiritualServices": "Spiritual Services",
     "prayerMats": "Prayers Mats",
     "accessories": "Accessories",
     "islamicBooks": "Islamic Books",
@@ -61,6 +62,7 @@ const en = {
     "collectionsTitle": "Collections",
     "supportTitle": "Support",
     "contactTitle": "Contact Us",
+    "spiritualServices": "Spiritual Services",
     "helpCenter": "Help Center",
     "refundPolicy": "Refund and exchange policy",
     "termsConditions": "Terms and conditions",

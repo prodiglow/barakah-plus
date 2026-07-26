@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 import { Counter } from "./Counter";
+import { SECTS, GENDERS, Sect, Gender } from "../constants/scholarMatching";
 
 export interface IScholar extends Document {
   scholarID: number;
@@ -14,6 +15,8 @@ export interface IScholar extends Document {
   blessings: number;  // 🙏 numeric value
   scholarServices: mongoose.Types.ObjectId[];
   phone_number: string;
+  gender: Gender;
+  sect: Sect;
 }
 
 const ScholarSchema = new Schema<IScholar>(
@@ -55,6 +58,10 @@ const ScholarSchema = new Schema<IScholar>(
     fee: { type: Number, required: true, default: 0 },
     blessings: { type: Number, required: true, default: 0 },
     phone_number: { type: String, required: true },
+
+    // 🧭 Gender / Sect (for Free Personal Dua scholar matching)
+    gender: { type: String, enum: GENDERS, required: true },
+    sect: { type: String, enum: SECTS, required: true },
   },
   { timestamps: true }
 );

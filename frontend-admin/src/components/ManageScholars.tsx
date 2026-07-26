@@ -32,11 +32,17 @@ import { Edit, Delete } from '@mui/icons-material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchScholars, deleteScholar, updateScholar } from '../services/scholarService';
+import type { ScholarGender, ScholarSect } from '../services/scholarService';
 import { Scholar } from '../types/Scholars';
 import { uploadToCloudinary, deleteFromCloudinary, getPublicIdFromUrl } from '../services/CloudinaryService';
 import { AuthContext } from '../contexts/AuthContext';
 
 const SERVICE_OPTIONS = ['Dua', 'Quran Khawani', 'Wazaif and Adhkar', 'Istikhara'];
+const GENDER_OPTIONS: { value: ScholarGender; label: string }[] = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+];
+const SECT_OPTIONS: ScholarSect[] = ['Shia', 'Deobandi', 'Barelvi', 'Ahl-e-Hadith'];
 
 const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger }) => {
     const [scholars, setScholars] = useState<Scholar[]>([]);
@@ -55,6 +61,8 @@ const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger 
         scholarEducation: '',
         scholarServices: [] as string[],
         phone_number: '',
+        gender: '' as ScholarGender | '',
+        sect: '' as ScholarSect | '',
     });
     const [updating, setUpdating] = useState(false);
 
@@ -73,6 +81,8 @@ const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger 
         scholarServices?: string;
         profileImage?: string;
         phone_number?: string;
+        gender?: string;
+        sect?: string;
     }>({});
 
     // Get auth context for token
@@ -120,6 +130,8 @@ const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger 
             scholarEducation: (scholar.scholarEducation ?? []).map(e => e?.name ?? '').join(', '),
             scholarServices: (scholar.scholarServices ?? []).map(s => s?.name ?? ''),
             phone_number: scholar.phone_number || '',
+            gender: scholar.gender || '',
+            sect: scholar.sect || '',
         });
         // Set profile image preview
         setProfileImagePreview(scholar.ProfileImg || '');
@@ -152,6 +164,14 @@ const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger 
         if (fieldErrors.scholarServices) {
             setFieldErrors(prev => ({ ...prev, scholarServices: undefined }));
         }
+    };
+
+    const handleGenderChange = (event: SelectChangeEvent) => {
+        handleEditFormChange('gender', event.target.value);
+    };
+
+    const handleSectChange = (event: SelectChangeEvent) => {
+        handleEditFormChange('sect', event.target.value);
     };
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -221,6 +241,14 @@ const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger 
             errors.phone_number = 'Phone number must be exactly 11 digits';
         }
 
+        if (!editFormData.gender) {
+            errors.gender = 'Gender is required';
+        }
+
+        if (!editFormData.sect) {
+            errors.sect = 'Sect is required';
+        }
+
         // If there are errors, set them and return
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
@@ -269,6 +297,8 @@ const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger 
                 scholarEducation: parseArrayField(editFormData.scholarEducation),
                 scholarServices: editFormData.scholarServices,
                 phone_number: editFormData.phone_number,
+                gender: editFormData.gender as ScholarGender,
+                sect: editFormData.sect as ScholarSect,
                 ProfileImg: profileImageUrl, // Include profile image URL
             };
 
@@ -588,6 +618,50 @@ const ManageScholars: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger 
                             helperText={fieldErrors.phone_number || "Must be 11 digits"}
                             inputProps={{ maxLength: 11 }}
                         />
+
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <FormControl fullWidth error={!!fieldErrors.gender}>
+                                <InputLabel id="edit-scholar-gender-label">Gender</InputLabel>
+                                <Select
+                                    labelId="edit-scholar-gender-label"
+                                    value={editFormData.gender}
+                                    label="Gender"
+                                    onChange={handleGenderChange}
+                                >
+                                    {GENDER_OPTIONS.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                {fieldErrors.gender && (
+                                    <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
+                                        {fieldErrors.gender}
+                                    </Typography>
+                                )}
+                            </FormControl>
+
+                            <FormControl fullWidth error={!!fieldErrors.sect}>
+                                <InputLabel id="edit-scholar-sect-label">Sect</InputLabel>
+                                <Select
+                                    labelId="edit-scholar-sect-label"
+                                    value={editFormData.sect}
+                                    label="Sect"
+                                    onChange={handleSectChange}
+                                >
+                                    {SECT_OPTIONS.map((option) => (
+                                        <MenuItem key={option} value={option}>
+                                            {option}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                {fieldErrors.sect && (
+                                    <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
+                                        {fieldErrors.sect}
+                                    </Typography>
+                                )}
+                            </FormControl>
+                        </Box>
 
                         <FormControl fullWidth error={!!fieldErrors.scholarServices}>
                             <InputLabel>Services</InputLabel>

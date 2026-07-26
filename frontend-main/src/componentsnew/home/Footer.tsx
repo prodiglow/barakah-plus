@@ -256,6 +256,7 @@ const Footer: React.FC = () => {
 
                 <FooterLinksSection title={t('footer.supportTitle')}>
                     {/* <FooterLink component={Link} to="/about-us">About Us</FooterLink> */}
+                    <FooterLink component={Link} to="/bookyourspirtualservice">{t('footer.spiritualServices')}</FooterLink>
                     <FooterLink component={Link} to="/faq">{t('footer.helpCenter')}</FooterLink>
                     <FooterLink component={Link} to="/refund-policy">{t('footer.refundPolicy')}</FooterLink>
                     <FooterLink component={Link} to="/terms-conditions">{t('footer.termsConditions')}</FooterLink>

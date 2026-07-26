@@ -20,12 +20,18 @@ import {
 } from '@mui/material';
 import { ArrowBack, CloudUpload } from '@mui/icons-material';
 import { createScholar } from '../services/scholarService';
+import type { ScholarGender, ScholarSect } from '../services/scholarService';
 import { uploadToCloudinary } from '../services/CloudinaryService';
 import type { SelectChangeEvent } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const SERVICE_OPTIONS = ['Dua', 'Quran Khawani', 'Wazaif and Adhkar', 'Istikhara'];
+const GENDER_OPTIONS: { value: ScholarGender; label: string }[] = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+];
+const SECT_OPTIONS: ScholarSect[] = ['Shia', 'Deobandi', 'Barelvi', 'Ahl-e-Hadith'];
 
 const AddScholarPage: React.FC = () => {
   const navigate = useNavigate();
@@ -49,6 +55,8 @@ const AddScholarPage: React.FC = () => {
   const [fee, setFee] = useState('');
   const [scholarServices, setScholarServices] = useState<string[]>([]);
   const [phone_number, setPhoneNumber] = useState('');
+  const [gender, setGender] = useState<ScholarGender | ''>('');
+  const [sect, setSect] = useState<ScholarSect | ''>('');
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,6 +111,14 @@ const AddScholarPage: React.FC = () => {
     setScholarServices(Array.isArray(value) ? value : [value]);
   };
 
+  const handleGenderChange = (event: SelectChangeEvent) => {
+    setGender(event.target.value as ScholarGender);
+  };
+
+  const handleSectChange = (event: SelectChangeEvent) => {
+    setSect(event.target.value as ScholarSect);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -143,6 +159,18 @@ const AddScholarPage: React.FC = () => {
 
       if (scholarServices.length === 0) {
         setError('At least one service is required');
+        setLoading(false);
+        return;
+      }
+
+      if (!gender) {
+        setError('Gender is required');
+        setLoading(false);
+        return;
+      }
+
+      if (!sect) {
+        setError('Sect is required');
         setLoading(false);
         return;
       }
@@ -211,6 +239,8 @@ const AddScholarPage: React.FC = () => {
         fee: Number(fee),
         scholarServices: scholarServices, // Already an array
         phone_number: phone_number,
+        gender: gender as ScholarGender,
+        sect: sect as ScholarSect,
         rating: 0,
         blessings: 0
       };
@@ -452,6 +482,43 @@ const AddScholarPage: React.FC = () => {
               sx={{ flex: 1 }}
               inputProps={{ maxLength: 11 }}
             />
+            {/* Gender Dropdown */}
+            <FormControl fullWidth margin="normal" required sx={{ flex: 1 }}>
+              <InputLabel id="scholar-gender-label">Gender</InputLabel>
+              <Select
+                labelId="scholar-gender-label"
+                id="scholar-gender"
+                value={gender}
+                label="Gender"
+                onChange={handleGenderChange}
+              >
+                {GENDER_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box sx={{ width: "80%", margin: "0 auto", display: 'flex', gap: 2, mb: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+            {/* Sect Dropdown */}
+            <FormControl fullWidth margin="normal" required sx={{ flex: 1 }}>
+              <InputLabel id="scholar-sect-label">Sect</InputLabel>
+              <Select
+                labelId="scholar-sect-label"
+                id="scholar-sect"
+                value={sect}
+                label="Sect"
+                onChange={handleSectChange}
+              >
+                {SECT_OPTIONS.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Box sx={{ flex: 1 }} /> {/* Spacer */}
           </Box>
 
