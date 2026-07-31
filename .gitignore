@@ -61,3 +61,6 @@ Thumbs.db
 
 # build cache
 *.tsbuildinfo
+
+# Local git worktrees
+.worktrees/
