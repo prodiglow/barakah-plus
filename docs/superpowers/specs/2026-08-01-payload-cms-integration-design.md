@@ -155,8 +155,40 @@ version.
 - The custom external-JWT strategy is added **now** and used for API access, so
   anything holding a valid `adminToken` (e.g. `frontend-admin`) can call the CMS
   API without a second credential.
+- **A sync hook keeps the two passwords identical** (see below), so the two
+  credentials never drift apart.
 
-Net effect: one email + password, one mental identity; two sign-in actions.
+Net effect: one email + password that stays in sync automatically; two sign-in
+actions.
+
+#### Admin → CMS user sync hook
+
+The CMS exposes `POST /api/sync/admin-user`, guarded by a shared secret header
+(`x-sync-secret`, value `CMS_SYNC_SECRET`, present in both apps' environments).
+It upserts a Payload user by email: create if absent, otherwise update name and
+password.
+
+The Express backend calls it after any mutation of admin credentials — admin
+creation (seeding) and the password-reset completion in `adminController` —
+posting `{ name, email, password }` over HTTPS. The plaintext password is
+available at exactly these two moments (before hashing), which is what makes the
+sync possible at all.
+
+Design constraints:
+
+- **Non-blocking.** The call is fire-and-forget with logging. A CMS outage must
+  never cause an admin password reset to fail; the app's own password is already
+  persisted by then.
+- **Idempotent**, so a repeated call is harmless.
+- **Repairable.** A `resync-cms-users` script re-runs the upsert from a supplied
+  password if the two ever drift (e.g. a sync call failed while the CMS was
+  down).
+- **Secret-guarded, not public.** The endpoint is rejected outright without a
+  matching `CMS_SYNC_SECRET`, and it is never called from a browser.
+
+**This hook is deliberately temporary.** In Phase 2 the CMS has no password at
+all (`disableLocalStrategy: true`), so the endpoint, the secret, and the Express
+call site are all deleted. It exists only to make Phase 1 seamless.
 
 ### Phase 2 — seamless SSO, once the custom domain is live
 
@@ -175,13 +207,16 @@ Payload
 
 Result: sign in once at the admin, the CMS is already authenticated.
 
-**Phase 2 prerequisite (blocking).** `backend/src/app.ts:30` currently calls
-`app.use(cors())` with no options, which emits `Access-Control-Allow-Origin: *`
-and no `Access-Control-Allow-Credentials`. Per the CORS spec a wildcard origin
-is incompatible with credentialed requests, so cookie-based cross-origin auth
-cannot work until this is replaced with an explicit origin allowlist plus
-`credentials: true`. This also closes an existing gap where any website can read
-the API cross-origin. Tracked as part of Phase 2, not this build.
+**Express CORS lockdown (done ahead of this build).** `backend/src/app.ts`
+previously called `app.use(cors())` with no options, emitting
+`Access-Control-Allow-Origin: *` with no `Access-Control-Allow-Credentials`.
+That is both an existing security gap — any website could read the API
+cross-origin on a visitor's behalf — and a hard blocker for Phase 2, since the
+CORS spec forbids a wildcard origin on credentialed requests. It is replaced by
+an explicit allowlist (production frontends, this project's Vercel preview
+deployments, and localhost dev ports) plus `credentials: true`. Requests with no
+`Origin` header — server-to-server calls and payment-gateway redirects — are
+unaffected.
 
 **Deliberately rejected: token-handoff SSO on `*.vercel.app`.** Achievable via a
 one-time, short-TTL, audience-bound handoff token, but it requires the full set
