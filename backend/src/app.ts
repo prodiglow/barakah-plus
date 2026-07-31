@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { corsOptions } from "./config/cors";
 import scholarRoutes from "./routes/scholarRoutes";
 import authRoutes from "./routes/authRoutes";
 import uploadRouter from "./routes/upload";
@@ -27,7 +28,7 @@ import blogRoutes from "./routes/blogRoutes";
 
 const app = express();
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // For JazzCash callbacks
 
