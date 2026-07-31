@@ -52,6 +52,10 @@ model no longer applies. Payload therefore has to be a **separate application**.
 4. **Same Atlas cluster, separate database.** Payload uses
    `cluster0.ltpu3mg.mongodb.net` with database `barakahCMS`, keeping CMS
    documents out of `barakahDB`.
+5. **Unified admin identity, phased.** One identity shared with the existing
+   `Admin` login. Seamless SSO is deferred to a Phase 2 that lands with the
+   planned custom domain, because `*.vercel.app` cannot share session cookies.
+   See **Unified authentication**.
 
 ## Architecture
 
@@ -99,8 +103,8 @@ Vercel serverless has no persistent filesystem, and it keeps all site imagery in
 one place.
 
 ### `users`
-Payload's own auth for CMS editors. Separate from the app's `Admin` collection;
-no shared session.
+CMS editors. Unified with the app's existing `Admin` identity — see
+**Unified authentication** below.
 
 ## Rich text → HTML
 
@@ -112,6 +116,79 @@ Rationale: least frontend churn, keeps Urdu/RTL content rendering correctly, and
 avoids rewriting the blog detail render path. `content` remains the canonical
 value, so switching to a structured React renderer later stays possible without
 data loss.
+
+## Unified authentication
+
+Goal: one identity for the CMS and the existing admin — no second account to
+manage. Delivered in two phases, because the current hosting blocks the clean
+version.
+
+### Verified constraints
+
+1. **Payload v3 supports external-JWT auth.** A collection may declare
+   `auth.strategies: [{ name, authenticate }]`. The strategy receives a Web
+   `Headers` object plus the `payload` instance, so it can read either an
+   `Authorization` header or a cookie, verify a JWT signed by the Express
+   backend with the shared `JWT_SECRET`, and return `{ user: { collection:
+   'users', ...doc } }`. `auth.disableLocalStrategy: true` turns off Payload's
+   own email/password login. (Verified against Payload `v3.87.0` source:
+   `packages/payload/src/auth/types.ts`,
+   [docs](https://payloadcms.com/docs/authentication/custom-strategies).)
+2. **`*.vercel.app` cannot share a session cookie.** `vercel.app` is on the
+   [Public Suffix List](https://publicsuffix.org/list/public_suffix_list.dat),
+   so a cookie scoped to `.vercel.app` is silently dropped by every browser;
+   Vercel
+   [documents this explicitly](https://vercel.com/kb/guide/can-i-set-a-cookie-from-my-vercel-project-subdomain-to-vercel-app).
+   Two `*.vercel.app` deployments are separate sites, not subdomains.
+3. **The Payload admin panel is server-rendered Next.js**, reached by ordinary
+   browser navigation. Navigation cannot carry an `Authorization` header, so
+   authenticating the panel UI requires a **cookie on the CMS's own origin**.
+
+### Phase 1 — one identity, while still on `*.vercel.app`
+
+- A provisioning script creates the Payload `users` record from the existing
+  `Admin` document (same name/email). Password hashes are **not** copied —
+  Payload uses its own hashing — so the password is supplied once at
+  provisioning time and kept deliberately identical.
+- Payload's local (email + password) strategy stays **enabled**, because it is
+  the only thing that can authenticate the panel UI without a shared cookie.
+- The custom external-JWT strategy is added **now** and used for API access, so
+  anything holding a valid `adminToken` (e.g. `frontend-admin`) can call the CMS
+  API without a second credential.
+
+Net effect: one email + password, one mental identity; two sign-in actions.
+
+### Phase 2 — seamless SSO, once the custom domain is live
+
+With both apps on subdomains of one registrable domain (e.g.
+`admin.example.com` and `cms.example.com`), cookie sharing becomes legal and
+Payload
+[recommends exactly this](https://payloadcms.com/docs/authentication/cookies):
+
+1. The Express backend additionally issues its JWT as
+   `HttpOnly; Secure; SameSite=Lax; Domain=.example.com`.
+2. Payload's custom strategy reads that cookie via `parseCookies(headers)`,
+   verifies it with the shared `JWT_SECRET`, and finds-or-creates the matching
+   Payload user by email.
+3. `auth.disableLocalStrategy: true` — the separate CMS password is removed
+   entirely.
+
+Result: sign in once at the admin, the CMS is already authenticated.
+
+**Phase 2 prerequisite (blocking).** `backend/src/app.ts:30` currently calls
+`app.use(cors())` with no options, which emits `Access-Control-Allow-Origin: *`
+and no `Access-Control-Allow-Credentials`. Per the CORS spec a wildcard origin
+is incompatible with credentialed requests, so cookie-based cross-origin auth
+cannot work until this is replaced with an explicit origin allowlist plus
+`credentials: true`. This also closes an existing gap where any website can read
+the API cross-origin. Tracked as part of Phase 2, not this build.
+
+**Deliberately rejected: token-handoff SSO on `*.vercel.app`.** Achievable via a
+one-time, short-TTL, audience-bound handoff token, but it requires the full set
+of OAuth-style mitigations (single-use enforced atomically, `Referrer-Policy:
+no-referrer`, POST rather than query string, immediate server-side exchange,
+nonce binding) — a meaningful security surface to hand-roll, and discarded the
+moment the custom domain lands. Not worth building to save one sign-in.
 
 ## Frontend integration
 
@@ -152,9 +229,14 @@ looks a page up by slug and renders `contentHtml`.
 - `media`: public read; authenticated write.
 - CORS and CSRF origins restricted to the frontend origins
   (`https://barakah-main.vercel.app`, `http://localhost:5173`).
-- `PAYLOAD_SECRET`, `DATABASE_URI`, and Cloudinary credentials supplied as Vercel
-  environment variables. Nothing committed — consistent with the existing
-  `.env.example` pattern.
+- `PAYLOAD_SECRET`, `DATABASE_URI`, Cloudinary credentials, and `JWT_SECRET`
+  (shared with the Express backend, required by the external-JWT strategy)
+  supplied as Vercel environment variables. Nothing committed — consistent with
+  the existing `.env.example` pattern.
+- The custom auth strategy pins the JWT algorithm and rejects `none`, and
+  returns `{ user: null }` rather than throwing on any verification failure
+  (Payload swallows strategy errors and logs them, so a thrown error would
+  degrade silently to "unauthenticated").
 
 ## Retiring the old stack
 
@@ -184,16 +266,25 @@ there is never a broken window:
 | Two admin panels (Payload for content, custom for commerce) | Clear domain split, documented in `DEPLOYMENT.md` |
 | Cloudinary adapter misconfiguration silently writing to local disk | Verify an uploaded asset returns a `res.cloudinary.com` URL before go-live |
 | Payload response shape drifts from `BlogData` | Mapping isolated in `blogService`; frontend pages stay decoupled |
+| Admin password changed in one system but not the other (Phase 1) | Documented as a known limitation; disappears in Phase 2 when the CMS password is removed entirely |
+| Custom auth strategy fails silently (Payload logs and falls through) | Strategy returns `null` explicitly on failure; verify via `payload.logger` during testing, not by expecting a 500 |
+| Auth strategies are not hot-reloaded in dev | Full server restart after strategy changes — noted in the CMS README |
 
 ## Build order
 
 1. Scaffold `cms/`, connect to `barakahCMS`, configure Cloudinary storage.
 2. Define `posts`, `pages`, `media`, `users` + the Lexical→HTML hook.
-3. Run locally; create a test post; verify REST output and the generated HTML.
-4. Deploy to Vercel; set env vars; create the first editor account.
-5. Rewire `blogService` + add `pageService`/`CmsPage`; verify against live CMS.
-6. Seed the policy pages.
-7. Retire the old blog stack (admin tab, Express routes, model).
+3. Add the external-JWT auth strategy (local strategy left enabled) and the
+   `Admin` → Payload user provisioning script.
+4. Run locally; create a test post; verify REST output and the generated HTML.
+5. Deploy to Vercel; set env vars; provision the editor account.
+6. Rewire `blogService` + add `pageService`/`CmsPage`; verify against live CMS.
+7. Seed the policy pages.
+8. Retire the old blog stack (admin tab, Express routes, model).
+
+Phase 2 (separate piece of work, after the custom domain is live): lock down the
+Express CORS config, issue the parent-domain auth cookie, switch the strategy to
+read it, and set `disableLocalStrategy: true`.
 
 ## Success criteria
 
@@ -202,4 +293,7 @@ there is never a broken window:
 - Drafts do **not** appear publicly.
 - Uploaded images resolve to Cloudinary URLs.
 - The five policy/info pages render from the CMS.
+- The CMS is signed into with the **same email and password** as the existing
+  admin, and a request bearing a valid `adminToken` authenticates against the
+  CMS API via the external-JWT strategy.
 - `frontend-main` and `backend` build clean with the old blog stack removed.
