@@ -52,7 +52,6 @@ const AppContent: React.FC = () => {
         <Route path="/admin/dashboard/duas" element={<AdminDashboard />} />
         <Route path="/admin/dashboard/categories" element={<AdminDashboard />} />
         <Route path="/admin/dashboard/events" element={<AdminDashboard />} />
-        <Route path="/admin/dashboard/blogs" element={<AdminDashboard />} />
         <Route path="/admin/dashboard/add-scholar" element={<AddScholarPage />} />
         <Route path="*" element={<Navigate to="/admin/dashboard/scholars" replace />} />
       </Routes>
