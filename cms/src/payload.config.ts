@@ -14,6 +14,11 @@ import { Pages } from './collections/Pages'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const ALLOWED_ORIGINS = [
+  'https://barakah-main.vercel.app',
+  'http://localhost:5173',
+]
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -24,6 +29,8 @@ export default buildConfig({
   collections: [Users, Media, Posts, Pages],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
+  cors: ALLOWED_ORIGINS,
+  csrf: ALLOWED_ORIGINS,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
