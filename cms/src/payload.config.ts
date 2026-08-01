@@ -14,9 +14,21 @@ import { Pages } from './collections/Pages'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const ALLOWED_ORIGINS = [
+// Origins allowed to make cross-origin requests to the CMS's REST/GraphQL
+// APIs (public, unauthenticated reads from frontend-main).
+const FRONTEND_ORIGINS = [
   'https://barakah-main.vercel.app',
   'http://localhost:5173',
+]
+
+// Origins allowed to submit Payload's own httpOnly session cookie back to
+// this server (the admin panel's own origin only — NOT frontend-main, which
+// never holds this cookie). This must be the CMS's own origin(s), or the
+// admin panel's cookie-authenticated writes (login is fine, but every
+// subsequent POST/PATCH/DELETE) get silently rejected as unauthenticated.
+const CMS_ORIGINS = [
+  'https://barakah-cms.vercel.app',
+  'http://localhost:3000',
 ]
 
 export default buildConfig({
@@ -29,8 +41,8 @@ export default buildConfig({
   collections: [Users, Media, Posts, Pages],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
-  cors: ALLOWED_ORIGINS,
-  csrf: ALLOWED_ORIGINS,
+  cors: FRONTEND_ORIGINS,
+  csrf: CMS_ORIGINS,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
