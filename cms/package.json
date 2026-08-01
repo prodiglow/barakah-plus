@@ -26,6 +26,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
+    "jose": "^6.2.6",
     "next": "16.2.6",
     "payload": "3.87.0",
     "payload-storage-cloudinary": "^1.2.1",
