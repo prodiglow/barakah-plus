@@ -39,7 +39,10 @@ const seedAdmin = async () => {
     console.log("📧 Email:", admin.email);
     console.log("👤 Name:", admin.name);
 
-    syncAdminToCms({
+    // Awaited (unlike the controller call site) so the sync completes — or
+    // is fully logged as failed — before process.exit() below can kill the
+    // process mid-request.
+    await syncAdminToCms({
       id: (admin._id as any).toString(),
       name: admin.name,
       email: admin.email,

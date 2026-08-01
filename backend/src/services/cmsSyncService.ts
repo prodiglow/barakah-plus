@@ -3,29 +3,35 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Fire-and-forget sync of an admin's credentials to the Payload CMS, so the
- * same login works in both systems (Phase 1 of the unified-auth design — see
+ * Sync of an admin's credentials to the Payload CMS, so the same login works
+ * in both systems (Phase 1 of the unified-auth design — see
  * docs/superpowers/specs/2026-08-01-payload-cms-integration-design.md).
  *
- * Deliberately non-blocking: a CMS outage must never prevent an admin
- * password reset or admin creation from succeeding in the main app. Errors
- * are logged, not thrown.
+ * Returns a promise so callers that must complete the sync before moving on
+ * (e.g. a seed script about to call process.exit()) can await it. Callers on
+ * a long-running request path (e.g. the admin password-reset controller)
+ * should keep calling this fire-and-forget (not awaited) — a CMS outage must
+ * never block or fail that request.
+ *
+ * The returned promise always resolves, never rejects: network/HTTP failures
+ * are caught internally and logged, not thrown, so awaiting this is safe and
+ * will never surface an unhandled rejection.
  */
 export function syncAdminToCms(admin: {
   id: string;
   name: string;
   email: string;
   password: string;
-}): void {
+}): Promise<void> {
   const cmsUrl = process.env.CMS_URL;
   const syncSecret = process.env.CMS_SYNC_SECRET;
 
   if (!cmsUrl || !syncSecret) {
     console.warn("⚠️ CMS_URL or CMS_SYNC_SECRET not set — skipping CMS user sync");
-    return;
+    return Promise.resolve();
   }
 
-  fetch(`${cmsUrl}/api/sync/admin-user`, {
+  return fetch(`${cmsUrl}/api/sync/admin-user`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
