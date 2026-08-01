@@ -35,6 +35,7 @@ import NewCart from "../componentsnew/Cart";
 import Checkout from "../componentsnew/Checkout";
 import CheckoutSuccess from "../componentsnew/CheckoutSuccess";
 import NotFoundPage from "../pages/NotFoundPage";
+import CmsPage from "../pages/CmsPage";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -81,6 +82,7 @@ const AppRoutes: React.FC = () => {
       {/* Blog routes */}
       <Route path="/blogs" element={<AllBlogsPage />} />
       <Route path="/blogs/:identifier" element={<BlogDetailPage />} />
+      <Route path="/pages/:slug" element={<CmsPage />} />
 
       {/* 404 Not Found - Catch all undefined routes */}
       <Route path="*" element={<NotFoundPage />} />
