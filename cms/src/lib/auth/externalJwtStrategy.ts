@@ -32,6 +32,10 @@ export const externalJwtStrategy: AuthStrategy = {
 
     let adminId: string
     try {
+      // Pin the accepted algorithm explicitly: without this, jose would trust
+      // whatever `alg` the token itself claims (including "none"), which is
+      // exactly the algorithm-confusion / alg:none class of JWT attack this
+      // pin blocks.
       const { payload: claims } = await jwtVerify(
         token,
         new TextEncoder().encode(secret),

@@ -6,6 +6,10 @@ export const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
   },
+  // disableLocalStrategy intentionally left unset (defaults false) — Phase 1
+  // of the unified-auth design still needs Payload's own email+password login
+  // for the server-rendered admin panel, which can't carry an Authorization
+  // header. Phase 2 (once a custom domain exists) will set this to true.
   auth: {
     strategies: [externalJwtStrategy],
   },
@@ -24,6 +28,9 @@ export const Users: CollectionConfig = {
       name: 'adminId',
       type: 'text',
       unique: true,
+      access: {
+        update: () => false,
+      },
       admin: {
         readOnly: true,
         description:
