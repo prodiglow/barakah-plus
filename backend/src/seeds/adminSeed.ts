@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Admin from "../models/Admin";
+import { syncAdminToCms } from "../services/cmsSyncService";
 
 dotenv.config();
 
@@ -37,6 +38,13 @@ const seedAdmin = async () => {
     console.log("✅ Admin seeded successfully");
     console.log("📧 Email:", admin.email);
     console.log("👤 Name:", admin.name);
+
+    syncAdminToCms({
+      id: (admin._id as any).toString(),
+      name: admin.name,
+      email: admin.email,
+      password: ADMIN_PASSWORD,
+    });
 
     await mongoose.disconnect();
     console.log("✅ Done and disconnected");
