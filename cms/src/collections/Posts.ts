@@ -1,13 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { contentHtmlField } from '../lib/contentHtmlField'
-
-const slugify = (value: string): string =>
-  value
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .trim()
+import { slugField } from '../lib/slugField'
+import { seoField } from '../lib/seoField'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -33,35 +27,7 @@ export const Posts: CollectionConfig = {
       type: 'text',
       required: true,
     },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
-      index: true,
-      admin: {
-        description: 'Auto-generated from the title if left blank.',
-      },
-      hooks: {
-        beforeValidate: [
-          async ({ value, siblingData, req, originalDoc }) => {
-            const base = slugify(value || siblingData?.title || '')
-            if (!base) return value
-
-            const existing = await req.payload.find({
-              collection: 'posts',
-              where: {
-                slug: { equals: base },
-                id: { not_equals: originalDoc?.id },
-              },
-              limit: 1,
-            })
-
-            return existing.docs.length ? `${base}-${Date.now()}` : base
-          },
-        ],
-      },
-    },
+    slugField('posts'),
     {
       name: 'excerpt',
       type: 'textarea',
@@ -105,19 +71,6 @@ export const Posts: CollectionConfig = {
         },
       },
     },
-    {
-      name: 'seo',
-      type: 'group',
-      fields: [
-        {
-          name: 'metaTitle',
-          type: 'text',
-        },
-        {
-          name: 'metaDescription',
-          type: 'textarea',
-        },
-      ],
-    },
+    seoField(),
   ],
 }
