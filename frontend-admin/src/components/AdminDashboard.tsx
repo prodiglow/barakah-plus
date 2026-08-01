@@ -16,7 +16,6 @@ const ManageDuas = lazy(() => import("../pages/ManageDuas")); // NEW Component
 const ManageCategories = lazy(() => import("../pages/ManageCategories")); // NEW Component
 const ManageUsers = lazy(() => import("./ManageUsers")); // NEW Component
 const ManageEvents = lazy(() => import("../pages/ManageEvents")); // NEW Component
-const ManageBlogs = lazy(() => import("../pages/ManageBlogs")); // Blog Component
 
 // ... (keep intermediary code)
 
@@ -31,7 +30,6 @@ const pathToTabIndex: { [key: string]: number } = {
   '/admin/dashboard/duas': 7,
   '/admin/dashboard/categories': 8,
   '/admin/dashboard/events': 9,
-  '/admin/dashboard/blogs': 10,
 };
 
 const tabIndexToPath: { [key: number]: string } = {
@@ -45,7 +43,6 @@ const tabIndexToPath: { [key: number]: string } = {
   7: '/admin/dashboard/duas',
   8: '/admin/dashboard/categories',
   9: '/admin/dashboard/events',
-  10: '/admin/dashboard/blogs',
 };
 
 // ... (keep intermediary code)
@@ -345,16 +342,6 @@ const AdminDashboard: React.FC = () => {
                 zIndex: 1,
               }}
             />
-            <Tab
-              label="Blogs"
-              {...a11yProps(10)}
-              sx={{
-                color: "black",
-                "&.Mui-selected": { color: "green", fontWeight: "bold" },
-                position: 'relative',
-                zIndex: 1,
-              }}
-            />
           </Tabs>
         </Box>
 
@@ -418,12 +405,6 @@ const AdminDashboard: React.FC = () => {
             <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}><CircularProgress /></Box>}>
               {/* @ts-ignore */}
               <ManageEvents refreshTrigger={refreshTrigger} />
-            </Suspense>
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={10} keepMounted={visitedTabs.has(10)}>
-            <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}><CircularProgress /></Box>}>
-              {/* @ts-ignore */}
-              <ManageBlogs refreshTrigger={refreshTrigger} />
             </Suspense>
           </CustomTabPanel>
         </Box>

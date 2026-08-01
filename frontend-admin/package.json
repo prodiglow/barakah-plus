@@ -19,7 +19,6 @@
     "jspdf-autotable": "^5.0.7",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-quill-new": "^3.8.3",
     "react-router-dom": "^7.9.6",
     "react-toastify": "^11.0.5",
     "recharts": "^3.2.1"

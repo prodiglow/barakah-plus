@@ -24,7 +24,6 @@ import jazzcashRoutes from "./routes/jazzcashRoutes";
 import alfalahRoutes from "./routes/alfalahRoutes";
 import islamicProductRoutes from "./routes/islamicProductRoutes";
 import paymentTransactionRoutes from "./routes/paymentTransactionRoutes";
-import blogRoutes from "./routes/blogRoutes";
 
 const app = express();
 
@@ -57,7 +56,6 @@ app.use("/api/payment", jazzcashRoutes);
 app.use("/api/alfalah", alfalahRoutes);
 app.use("/api/islamic-products", islamicProductRoutes);
 app.use("/api/payment-transactions", paymentTransactionRoutes);
-app.use("/api/blogs", blogRoutes);
 
 
 
