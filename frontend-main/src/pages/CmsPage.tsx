@@ -3,12 +3,18 @@ import { useParams } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { pageService, PageData } from '../services/pageService';
 
+interface CmsPageProps {
+    slug?: string;
+}
+
 /**
  * Renders a single CMS-managed page (About Us, FAQ, policies, etc.) by slug.
- * Route: /pages/:slug — see AppRoutes.tsx.
+ * Route: /pages/:slug — see AppRoutes.tsx. Also used directly with a fixed
+ * `slug` prop by the dedicated policy-page routes (e.g. /about-us, /faq).
  */
-const CmsPage: React.FC = () => {
-    const { slug } = useParams<{ slug: string }>();
+const CmsPage: React.FC<CmsPageProps> = ({ slug: slugProp }) => {
+    const { slug: slugParam } = useParams<{ slug: string }>();
+    const slug = slugProp || slugParam;
     const [page, setPage] = useState<PageData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

@@ -25,11 +25,6 @@ import CategoryProductsPage from "../componentsnew/islamic-merchandise/CategoryP
 import ProductDetailsPage from "../componentsnew/islamic-merchandise/ProductDetailsPage";
 import HomePage1 from "../componentsnew/HomePage1";
 import AllProductsPage from "../componentsnew/islamic-merchandise/AllProductsPage";
-import AboutUs from "../componentsnew/AboutUs";
-import FAQ from "../componentsnew/FAQ";
-import RefundPolicy from "../componentsnew/RefundPolicy";
-import TermsConditions from "../componentsnew/TermsConditions";
-import PaymentPrivacyPolicy from "../componentsnew/PaymentPrivacyPolicy";
 import ContactUs from "../componentsnew/ContactUs";
 import NewCart from "../componentsnew/Cart";
 import Checkout from "../componentsnew/Checkout";
@@ -58,11 +53,11 @@ const AppRoutes: React.FC = () => {
       <Route path="/shop-islamic" element={<AllProductsPage />} />
       <Route path="/islamic-merchandise/:category" element={<CategoryProductsPage />} />
       <Route path="/islamic-products/:productId" element={<ProductDetailsPage />} />
-      <Route path="/about-us" element={<AboutUs />} />
-      <Route path="/faq" element={<FAQ />} />
-      <Route path="/refund-policy" element={<RefundPolicy />} />
-      <Route path="/terms-conditions" element={<TermsConditions />} />
-      <Route path="/payment-privacy-policy" element={<PaymentPrivacyPolicy />} />
+      <Route path="/about-us" element={<CmsPage slug="about-us" />} />
+      <Route path="/faq" element={<CmsPage slug="faq" />} />
+      <Route path="/refund-policy" element={<CmsPage slug="refund-policy" />} />
+      <Route path="/terms-conditions" element={<CmsPage slug="terms-conditions" />} />
+      <Route path="/payment-privacy-policy" element={<CmsPage slug="payment-privacy-policy" />} />
       <Route path="/contact-us" element={<ContactUs />} />
       <Route path="/cart1" element={<NewCart />} />
       <Route path="/checkout1" element={<Checkout />} />
