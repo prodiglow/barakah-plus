@@ -10,6 +10,7 @@
     "dev:main": "npm --workspace frontend-main run dev",
     "dev:admin": "npm --workspace frontend-admin run dev",
     "dev:backend": "npm --workspace backend run dev",
+    "dev:cms": "npm --prefix cms run dev",
     "dev": "npm-run-all --parallel dev:backend dev:main dev:admin"
   },
   "devDependencies": {

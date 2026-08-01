@@ -98,9 +98,15 @@ FAQ, Refund Policy, Terms & Conditions, Payment & Privacy Policy.
 
 ### `media`
 Uploads with alt text. **Stored in the existing Cloudinary account**
-(cloud name `r4qesufu`) via a Cloudinary storage adapter — required because
-Vercel serverless has no persistent filesystem, and it keeps all site imagery in
-one place.
+(cloud name `r4qesufu`) — required because Vercel serverless has no persistent
+filesystem, and it keeps all site imagery in one place.
+
+There is no official Payload-team Cloudinary adapter (confirmed against the npm
+registry and Payload's own storage-adapters doc — only S3, Azure, GCS, Vercel
+Blob, Uploadthing, and R2 are official). `media` uses the community package
+`payload-storage-cloudinary`, which wraps Payload's own official extension
+point (`@payloadcms/plugin-cloud-storage`) rather than inventing a new one —
+the same official interface every first-party adapter is built on.
 
 ### `users`
 CMS editors. Unified with the app's existing `Admin` identity — see
@@ -264,10 +270,12 @@ looks a page up by slug and renders `contentHtml`.
 - `media`: public read; authenticated write.
 - CORS and CSRF origins restricted to the frontend origins
   (`https://barakah-main.vercel.app`, `http://localhost:5173`).
-- `PAYLOAD_SECRET`, `DATABASE_URI`, Cloudinary credentials, and `JWT_SECRET`
-  (shared with the Express backend, required by the external-JWT strategy)
-  supplied as Vercel environment variables. Nothing committed — consistent with
-  the existing `.env.example` pattern.
+- `PAYLOAD_SECRET`, `MONGODB_URI` (Payload's scaffolding defaults to
+  `DATABASE_URL`; renamed for consistency with the rest of the monorepo),
+  Cloudinary credentials, and `JWT_SECRET` (shared with the Express backend,
+  required by the external-JWT strategy) supplied as Vercel environment
+  variables. Nothing committed — consistent with the existing `.env.example`
+  pattern.
 - The custom auth strategy pins the JWT algorithm and rejects `none`, and
   returns `{ user: null }` rather than throwing on any verification failure
   (Payload swallows strategy errors and logs them, so a thrown error would

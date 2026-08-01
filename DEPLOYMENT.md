@@ -5,6 +5,7 @@ A monorepo with three deployables, each with its own `vercel.json`:
 | App | Path | What it is | Deploy as |
 |-----|------|-----------|-----------|
 | Backend | `backend/` | Express + MongoDB API (serverless) | Vercel project, root `backend/` |
+| CMS | `cms/` | Payload v3 (Next.js) — blog posts & pages | Vercel project, root `cms/` |
 | Public site | `frontend-main/` | React + Vite storefront | Vercel project, root `frontend-main/` |
 | Admin | `frontend-admin/` | React + Vite dashboard | Vercel project, root `frontend-admin/` |
 
@@ -24,9 +25,18 @@ Feature-specific (add when you enable each feature):
 - SMTP: `SMTP_EMAIL`, `SMTP_PASSWORD`, `FROM_EMAIL`, … (transactional email)
 - JazzCash: `JAZZCASH_*`
 - Bank Alfalah: `ALFALAH_*` (sandbox values ship ready; swap for production at go-live)
+- `CMS_URL`, `CMS_SYNC_SECRET` — enables syncing the admin login to the CMS (see the Payload CMS integration spec)
+
+### CMS (`cms/`)
+- `PAYLOAD_SECRET` — random string (generate fresh per environment, do not reuse across dev/prod)
+- `MONGODB_URI` — same Atlas cluster as the backend, **database `barakahCMS`** (not `barakahDB`)
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` — same Cloudinary account as the backend
+- `JWT_SECRET` — **must equal** the backend's `JWT_SECRET` (verifies admin tokens)
+- `CMS_SYNC_SECRET` — **must equal** the backend's `CMS_SYNC_SECRET` (guards the admin-user sync endpoint)
 
 ### Public site (`frontend-main/`)
 - `VITE_API_BASE_URL` — backend origin, **no** trailing `/api` (e.g. `https://your-backend.vercel.app`)
+- `VITE_CMS_URL` — the CMS's production URL (blog posts & pages are read from here)
 
 ### Admin (`frontend-admin/`)
 - `VITE_API_BASE_URL` — backend origin, no trailing `/api`
@@ -35,8 +45,9 @@ Feature-specific (add when you enable each feature):
 ## Deploy order
 
 1. **Backend first** — deploy it, note its URL, set its env vars.
-2. **Public site** — set `VITE_API_BASE_URL` to the backend URL, deploy.
-3. **Admin** — same `VITE_API_BASE_URL`, deploy.
+2. **CMS** — deploy it, note its URL, set `CMS_URL`/`CMS_SYNC_SECRET` on the backend and redeploy the backend.
+3. **Public site** — set `VITE_API_BASE_URL` and `VITE_CMS_URL`, deploy.
+4. **Admin** — same `VITE_API_BASE_URL`, deploy.
 
 On Vercel, create one project per app with the **Root Directory** set to that subfolder; the per-app `vercel.json` handles the rest.
 

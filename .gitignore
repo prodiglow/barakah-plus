@@ -38,6 +38,8 @@ pnpm-debug.log*
 # Build output
 /dist/
 build/
+.next/
+.vercel/
 
 # Local env files
 .env
@@ -61,3 +63,6 @@ Thumbs.db
 
 # build cache
 *.tsbuildinfo
+
+# Local git worktrees
+.worktrees/

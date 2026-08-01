@@ -3,6 +3,7 @@ import Admin from "../models/Admin";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { syncAdminToCms } from "../services/cmsSyncService";
 
 dotenv.config();
 
@@ -148,6 +149,13 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     // Update Password
     admin.password = newPassword;
     await admin.save();
+
+    syncAdminToCms({
+      id: admin._id.toString(),
+      name: admin.name,
+      email: admin.email,
+      password: newPassword,
+    });
 
     res.status(200).json({ message: "Password updated successfully" });
 
